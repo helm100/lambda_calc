@@ -11,8 +11,9 @@ class functie:
 		self.pram=pram
 		self.body=body
 
+#laten we lambda als een l printen
 	def __str__(self):
-		pass
+		return "(l" + ''.join(self.pram) + "." + "".join(self.body) + ")"
 
 	def alfa_redu(self):
 		pass
@@ -26,6 +27,7 @@ class functie:
 		return self.body
 
 functie = functie(pram=["a", "b", "c"],body=["a", "b", "c"])
+print(functie)
 print(functie.beta_redu(["(lb.xy)", "(lsz.z)", "z"]))
 
 
