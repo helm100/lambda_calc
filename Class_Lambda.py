@@ -6,6 +6,10 @@ def replace(lijst, old, new):
 			lijst[i]=new
 	return lijst
 
+#Volgens mij kunnen we deze functie ook als een methode maken met overloaden, alleen ik wist ff niet hoe
+#Deze functie neemt een string en returnd de bijpassende functie
+
+
 class functie:
 	def __init__(self, pram, body):
 		self.pram=pram
@@ -25,6 +29,25 @@ class functie:
 			if len(self.body[i]>1):'''
 
 		return self.body
+
+def str_to_func(tekst):
+	if tekst[0]=="(" and tekst[-1]==")":
+		begin=2
+	else:
+		begin=1
+	index = tekst.find(".")
+	pram=[]
+	body=[]
+	for x in range(begin,index):
+		pram.append(tekst[x])
+	for x in range(index+1,len(tekst)-1):
+		body.append(tekst[x])
+	return functie(pram=pram, body=body)
+
+functie_2=str_to_func("(lax.x)")
+functie_3=str_to_func("lax.x")
+print(functie_2)
+print(functie_3)
 
 functie = functie(pram=["a", "b", "c"],body=["a", "b", "c"])
 print(functie)
