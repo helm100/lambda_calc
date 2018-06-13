@@ -76,11 +76,13 @@ def str_to_expr(tekst):
 			output.append(tekst[i])
 	return output
 
-def evalueer_2(lijst):
+def evalueer(lijst):
+	if lijst ==[]:
+		return []
 	if isinstance(lijst[0], functie):
 			return evalueer(lijst[0].beta_redu(lijst[1:]))
 	else:
-		return lijst[0]+evalueer(lijst[1:])
+		return [lijst[0]]+evalueer(lijst[1:])
 
 functie1 = functie(["y", "x"], ["x"])
 functie2 = functie(["y"], ["y"])
@@ -88,7 +90,7 @@ functie3 = functie(["a", "b"], [functie2, functie1, "a"])
 
 lijst = [functie1, "a","b", functie3, "c", functie2]
 
-for x in evalueer_2(lijst):
+for x in evalueer(lijst):
 	print(x)
 
 
