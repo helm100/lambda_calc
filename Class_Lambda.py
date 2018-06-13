@@ -25,7 +25,7 @@ class functie:
 			self.body = replace(self.body, self.pram.pop(0), argumenten.pop(0))
 		if len(self.pram)==0:
 			return self.body + argumenten
-		return self
+		return [self]
 
 	def vereenvoudig():
 		pass
@@ -46,23 +46,19 @@ def str_to_func(tekst):
 		body.append(tekst[x])
 	return functie(pram, body)
 
-def first_functie(lijst):
-	for x in range(len(lijst)):
-		if isinstance(lijst[x], functie):
-			return x
-	return None
+def evalueer_2(lijst):
+	if isinstance(lijst[0], functie):
+			return evalueer(lijst[0].beta_redu(lijst[1:]))
+	else:
+		return lijst[0]+evalueer(lijst[1:])
 
-#Gegeven een lijst met functies en variabelen, evalueer deze helemaal
-def evalueer(lijst):
-	index = first_functie(lijst)
-	if index==None:
-		return lijst
-	return lijst[:index] + evalueer(lijst[index].beta_redu(lijst[index+1:]))
-
-functie1 = functie(["zx"], ["x"])
+functie1 = functie(["y", "x"], ["x"])
 functie2 = functie(["y"], ["y"])
+functie3 = functie(["a", "b"], [functie2, functie1, "a"])
 
-lijst = [functie1, "a",functie2]
-print(evalueer(lijst))
+lijst = [functie1, "a","b", functie3, "c", functie2]
+
+for x in evalueer_2(lijst):
+	print(x)
 
 
