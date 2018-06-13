@@ -15,7 +15,7 @@ class functie:
 	def __str__(self):
 		return "(l" + ''.join(self.pram) + "." + "".join(self.body) + ")"
 
-	def alfa_redu(self):
+	def alfa_conversion(self):
 		pass
 
 	def beta_redu(self, argumenten):
@@ -38,9 +38,9 @@ def str_to_func(tekst):
 	body=[]
 	for x in range(begin,index):
 		pram.append(tekst[x])
-	for x in range(index+1,len(tekst)-1):
+	for x in range(index+1,len(tekst)+1-begin):
 		body.append(tekst[x])
-	return functie(pram=pram, body=body)
+	return functie(pram, body)
 
 functie_2=str_to_func("(lax.x)")
 functie_3=str_to_func("lax.x")
