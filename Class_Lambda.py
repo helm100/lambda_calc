@@ -70,9 +70,8 @@ def str_to_expr(tekst):
 			nieuwe_tekst=tekst[beg:i+1]
 			index=nieuwe_tekst.find('.')
 			pram=list(nieuwe_tekst[2:index])
-			body=str_to_expr(nieuwe_tekst[index+1:len(nieuwe_tekst)-1]
-			func = functie(pram,body)
-			output.append(func)
+			body=str_to_expr(nieuwe_tekst[index+1:len(nieuwe_tekst)-1])
+			output.append(functie(pram,body))
 		elif haakjes == 0:
 			output.append(tekst[i])
 	return output
