@@ -84,13 +84,8 @@ def evalueer(lijst):
 	else:
 		return [lijst[0]]+evalueer(lijst[1:])
 
-functie1 = functie(["y", "x"], ["x"])
-functie2 = functie(["y"], ["y"])
-functie3 = functie(["a", "b"], [functie2, functie1, "a"])
-
-lijst = [functie1, "a","b", functie3, "c", functie2]
-
-for x in evalueer(lijst):
-	print(x)
+expr = str_to_expr("(lxyz.y(xyz))(lxyz.y(xyz))(luv.u(u(uv)))")
+print(expr)
+print(evalueer(expr))
 
 
