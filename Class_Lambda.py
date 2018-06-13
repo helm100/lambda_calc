@@ -45,6 +45,37 @@ def str_to_func(tekst):
 	for x in range(index+1,len(tekst)+1-begin):
 		body.append(tekst[x])
 	return functie(pram, body)
+	
+def verw_haak(tekst):
+	zonder_haak = ""
+	for c in tekst:
+		if c != "(" and c != ")":
+			zonder_haak += c
+	return zonder_haak
+
+def str_to_expr(tekst):
+	output = []
+	haakjes = 0
+	for i in range(len(tekst)):
+		if tekst[i] == "(" and haakjes == 0:
+			beg = i
+			haakjes += 1
+		elif tekst[i] == "(" and haakjes > 0:
+			haakjes += 1
+		elif tekst[i] == ")" and haakjes > 1:
+			haakjes -= 1
+		elif tekst[i] == ")" and haakjes == 1:
+			haakjes -= 1
+			#func = verw_haak(tekst[beg:i+1])
+			nieuwe_tekst=tekst[beg:i+1]
+			index=nieuwe_tekst.find('.')
+			pram=list(nieuwe_tekst[2:index])
+			body=str_to_expr(nieuwe_tekst[index+1:len(nieuwe_tekst)-1]
+			func = functie(pram,body)
+			output.append(func)
+		elif haakjes == 0:
+			output.append(tekst[i])
+	return output
 
 def first_functie(lijst):
 	for x in range(len(lijst)):
