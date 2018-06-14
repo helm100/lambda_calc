@@ -65,12 +65,6 @@ def str_to_func(tekst):
 		body.append(tekst[x])
 	return functie(pram, body)
 	
-def verw_haak(tekst):
-	zonder_haak = ""
-	for c in tekst:
-		if c != "(" and c != ")":
-			zonder_haak += c
-	return zonder_haak
 
 def str_to_expr(tekst):
 	output = []
@@ -91,7 +85,7 @@ def str_to_expr(tekst):
 			pram=list(nieuwe_tekst[1:index])
 			body=str_to_expr(nieuwe_tekst[index+1:len(nieuwe_tekst)-1])
 			output.append(functie(pram,body))
-		elif haakjes == 0 and tekst[i] != "(" and tekst[i] != ")":
+		elif haakjes == 0:
 			output.append(tekst[i])
 	return output
 
@@ -105,18 +99,8 @@ def evalueer(lijst):
 		return [lijst[0]]+evalueer(lijst[1:])
 
 expr = str_to_expr("(lxyz.y(xyz))((lxyz.y(xyz))(luv.u(u(uv))))")
-expr = [expr[0]] + evalueer([expr[1], expr[2]])
-'''print(len(evalueer(expr)))'''
-print(evalueer(expr)[0].vereenvoudig())
-'''for x in expr:
-	print(x)'''
-#print(evalueer(expr))
-
-'''functie1=functie(pram=["a", "b"], body=["a", "b", "c"])
-functie2=functie(pram=["x", "y"], body=["y"])
-for x in evalueer([functie1, functie2])[0].body:
-	print(x)
-print(evalueer([functie1, functie2])[0])'''
+#expr = [expr[0]] + evalueer([expr[1], expr[2]])
+print(expr[1])
 
 
 
