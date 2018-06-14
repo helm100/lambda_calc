@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 #denk na over invoer van functies zonder haakjes (alfa_reductie)
 #denk na over len(self.body)==0
-#the reduction process may not terminate. For instance, consider the term Ω = ( λ x . x x ) ( λ x . x x ) {\displaystyle \Omega =(\lambda x.xx)(\lambda x.xx)} \Omega =(\lambda x.xx)(\lambda x.xx). Here ( λ x . x x ) ( λ x . x x ) → ( x x ) [ x := λ x . x x ] = ( x [ x := λ x . x x ] ) ( x [ x := λ x . x x ] ) = ( λ x . x x ) ( λ x . x x ) {\displaystyle (\lambda x.xx)(\lambda x.xx)\to (xx)[x:=\lambda x.xx]=(x[x:=\lambda x.xx])(x[x:=\lambda x.xx])=(\lambda x.xx)(\lambda x.xx)} (\lambda x.xx)(\lambda x.xx)\to (xx)[x:=\lambda x.xx]=(x[x:=\lambda x.xx])(x[x:=\lambda x.xx])=(\lambda x.xx)(\lambda x.xx). That is, the term reduces to itself in a single beta reduction, and therefore the reduction process will never terminate.
-
+#the reduction process may not terminate. For instance, consider the term O = ( lx . x x ) ( l x . x x ), gaat naar zichzelf dus stopt nooit  
 def replace(lijst, old, new):
 	for i in range(len(lijst)):
 		if lijst[i] == old:
@@ -17,7 +16,14 @@ class functie:
 
 #laten we lambda als een l printen
 	def __str__(self):
-		return "(l" + ''.join(self.pram) + "." + "".join(self.body) + ")"
+		body=[]
+		for x in self.body:
+			if isinstance(x, functie):
+				body.append(x.__str__())
+			else: 
+				body.append(x)
+		
+		return "(l" + ''.join(self.pram) + "." + "".join(body) + ")"
 
 	def alfa_conversion(self):
 		pass
@@ -29,8 +35,19 @@ class functie:
 			return self.body + argumenten
 		return [self]
 
-	def vereenvoudig():
-		pass
+	def body_bevat_functie(self):
+		for x in self.body:
+			if isinstance(x, functie):
+				return True
+		return False
+
+	#gemaakt om een body erin te stoppen
+	def vereenvoudig(self):
+		if self.body_bevat_functie():
+			self.body=evalueer(self.body)
+			return self.vereenvoudig()
+		else:
+			return self
 
 #Volgens mij kunnen we deze functie ook als een methode maken met overloaden, alleen ik wist ff niet hoe
 #Deze functie neemt een string en returnd de bijpassende functie
@@ -78,6 +95,7 @@ def str_to_expr(tekst):
 			output.append(tekst[i])
 	return output
 
+#deze functie is niet commutatief/houdt geen rekening met haakjes volgorde
 def evalueer(lijst):
 	if len(lijst) == 1:
 		return lijst
@@ -86,14 +104,19 @@ def evalueer(lijst):
 	else:
 		return [lijst[0]]+evalueer(lijst[1:])
 
-	
 expr = str_to_expr("(lxyz.y(xyz))((lxyz.y(xyz))(luv.u(u(uv))))")
-print(expr)
-for x in expr:
-	print(x)
+expr = [expr[0]] + evalueer([expr[1], expr[2]])
+'''print(len(evalueer(expr)))'''
+print(evalueer(expr)[0].vereenvoudig())
+'''for x in expr:
+	print(x)'''
 #print(evalueer(expr))
 
+'''functie1=functie(pram=["a", "b"], body=["a", "b", "c"])
+functie2=functie(pram=["x", "y"], body=["y"])
+for x in evalueer([functie1, functie2])[0].body:
+	print(x)
+print(evalueer([functie1, functie2])[0])'''
 
-functie1=functie(pram=["a", "b", "c"],body=["a", "b"])
-functie2=functie(pram=["b"], body=["b"])
-print(evalueer([functie1, "x"]))
+
+
