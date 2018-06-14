@@ -1,5 +1,7 @@
+#!/usr/bin/env python3
 #denk na over invoer van functies zonder haakjes (alfa_reductie)
 #denk na over len(self.body)==0
+#the reduction process may not terminate. For instance, consider the term Ω = ( λ x . x x ) ( λ x . x x ) {\displaystyle \Omega =(\lambda x.xx)(\lambda x.xx)} \Omega =(\lambda x.xx)(\lambda x.xx). Here ( λ x . x x ) ( λ x . x x ) → ( x x ) [ x := λ x . x x ] = ( x [ x := λ x . x x ] ) ( x [ x := λ x . x x ] ) = ( λ x . x x ) ( λ x . x x ) {\displaystyle (\lambda x.xx)(\lambda x.xx)\to (xx)[x:=\lambda x.xx]=(x[x:=\lambda x.xx])(x[x:=\lambda x.xx])=(\lambda x.xx)(\lambda x.xx)} (\lambda x.xx)(\lambda x.xx)\to (xx)[x:=\lambda x.xx]=(x[x:=\lambda x.xx])(x[x:=\lambda x.xx])=(\lambda x.xx)(\lambda x.xx). That is, the term reduces to itself in a single beta reduction, and therefore the reduction process will never terminate.
 
 def replace(lijst, old, new):
 	for i in range(len(lijst)):
@@ -57,7 +59,7 @@ def str_to_expr(tekst):
 	output = []
 	haakjes = 0
 	for i in range(len(tekst)):
-		if tekst[i] == "(" and haakjes == 0:
+		if tekst[i] == "l" and haakjes == 0:
 			beg = i
 			haakjes += 1
 		elif tekst[i] == "(" and haakjes > 0:
@@ -69,10 +71,10 @@ def str_to_expr(tekst):
 			#func = verw_haak(tekst[beg:i+1])
 			nieuwe_tekst=tekst[beg:i+1]
 			index=nieuwe_tekst.find('.')
-			pram=list(nieuwe_tekst[2:index])
+			pram=list(nieuwe_tekst[1:index])
 			body=str_to_expr(nieuwe_tekst[index+1:len(nieuwe_tekst)-1])
 			output.append(functie(pram,body))
-		elif haakjes == 0:
+		elif haakjes == 0 and tekst[i] != "(" and tekst[i] != ")":
 			output.append(tekst[i])
 	return output
 
@@ -84,8 +86,10 @@ def evalueer(lijst):
 	else:
 		return [lijst[0]]+evalueer(lijst[1:])
 
-expr = str_to_expr("(lxyz.y(xyz))(lxyz.y(xyz))(luv.u(u(uv)))")
+expr = str_to_expr("(lxyz.y(xyz))((lxyz.y(xyz))(luv.u(u(uv))))")
 print(expr)
-print(evalueer(expr))
+for x in expr:
+	print(x)
+#print(evalueer(expr))
 
 
