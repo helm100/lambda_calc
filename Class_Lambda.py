@@ -85,7 +85,7 @@ def evalueer(lijst):
 			return evalueer(lijst[0].beta_redu(lijst[1:]))
 	else:
 		return [lijst[0]]+evalueer(lijst[1:])
-
+	
 expr = str_to_expr("(lxyz.y(xyz))((lxyz.y(xyz))(luv.u(u(uv))))")
 print(expr)
 for x in expr:
