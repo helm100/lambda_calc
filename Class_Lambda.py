@@ -79,12 +79,13 @@ def str_to_expr(tekst):
 	return output
 
 def evalueer(lijst):
-	if lijst ==[]:
-		return []
+	if len(lijst) == 1:
+		return lijst
 	if isinstance(lijst[0], functie):
 			return evalueer(lijst[0].beta_redu(lijst[1:]))
 	else:
 		return [lijst[0]]+evalueer(lijst[1:])
+
 	
 expr = str_to_expr("(lxyz.y(xyz))((lxyz.y(xyz))(luv.u(u(uv))))")
 print(expr)
@@ -93,3 +94,6 @@ for x in expr:
 #print(evalueer(expr))
 
 
+functie1=functie(pram=["a", "b", "c"],body=["a", "b"])
+functie2=functie(pram=["b"], body=["b"])
+print(evalueer([functie1, "x"]))
