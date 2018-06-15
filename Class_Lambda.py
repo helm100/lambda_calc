@@ -66,8 +66,8 @@ def str_to_func(tekst):
 	return functie(pram, body)
 	
 
-def str_to_expr(tekst):
-	output = []
+def str_to_expr1(tekst):
+	inp = []
 	haakjes = 0
 	for i in range(len(tekst)):
 		if tekst[i] == "l" and haakjes == 0:
@@ -79,15 +79,34 @@ def str_to_expr(tekst):
 			haakjes -= 1
 		elif tekst[i] == ")" and haakjes == 1:
 			haakjes -= 1
-			#func = verw_haak(tekst[beg:i+1])
 			nieuwe_tekst=tekst[beg:i+1]
 			index=nieuwe_tekst.find('.')
 			pram=list(nieuwe_tekst[1:index])
-			body=str_to_expr(nieuwe_tekst[index+1:len(nieuwe_tekst)-1])
-			output.append(functie(pram,body))
-		elif haakjes == 0:
-			output.append(tekst[i])
-	return output
+			body=str_to_expr1(nieuwe_tekst[index+1:len(nieuwe_tekst)-1])
+			inp.append(functie(pram,body))
+		elif haakjes == 0 and not (i<len(tekst)-1 and tekst[i+1]=="l"):
+			inp.append(tekst[i])
+		
+	return inp
+	
+def expr_to_expr2(input,output=[]):
+	if len(input) == 0:
+		return output
+	if input[0] == ")":
+		del input[0]
+		return output
+	elif input[0] == "(":
+		del input[0]
+		subl = expr_to_expr2(input,[])
+		output.append(subl)
+		return expr_to_expr2(input,output)
+	else:
+		output.append(input.pop(0))
+		return expr_to_expr2(input,output)
+		
+def str_to_expr(tekst):
+	return expr_to_expr2(str_to_expr1(tekst))
+	
 
 #deze functie is niet commutatief/houdt geen rekening met haakjes volgorde
 def evalueer(lijst):
@@ -95,12 +114,18 @@ def evalueer(lijst):
 		return lijst
 	if isinstance(lijst[0], functie):
 			return evalueer(lijst[0].beta_redu(lijst[1:]))
+	#elif isinstance(lijst[0], list):
+	#	return evalueer(evalueer(lijst[0])
 	else:
 		return [lijst[0]]+evalueer(lijst[1:])
 
-expr = str_to_expr("(lxyz.y(xyz))((lxyz.y(xyz))(luv.u(u(uv))))")
+expr = str_to_expr("(lxyz.y(xyz))((lxyz.y((xy)z))(luv.u(u(uv))))")
 #expr = [expr[0]] + evalueer([expr[1], expr[2]])
-print(expr[1])
+print(expr)
+#print(expr_to_expr2(expr))
+#for x in expr_to_expr2(expr):
+#	if x != "(" and x != ")":
+#		print(x)
 
 
 
