@@ -89,7 +89,7 @@ def str_to_expr1(tekst):
 		
 	return inp
 	
-def expr_to_expr2(input,output=[]):
+def expr1_to_expr(input,output=[]):
 	if len(input) == 0:
 		return output
 	if input[0] == ")":
@@ -97,15 +97,15 @@ def expr_to_expr2(input,output=[]):
 		return output
 	elif input[0] == "(":
 		del input[0]
-		subl = expr_to_expr2(input,[])
+		subl = expr1_to_expr(input,[])
 		output.append(subl)
-		return expr_to_expr2(input,output)
+		return expr1_to_expr(input,output)
 	else:
 		output.append(input.pop(0))
-		return expr_to_expr2(input,output)
+		return expr1_to_expr(input,output)
 		
 def str_to_expr(tekst):
-	return expr_to_expr2(str_to_expr1(tekst))
+	return expr1_to_expr(str_to_expr1(tekst))
 	
 
 #deze functie is niet commutatief/houdt geen rekening met haakjes volgorde
