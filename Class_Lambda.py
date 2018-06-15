@@ -96,6 +96,7 @@ def str_to_expr(tekst):
 	return output
 
 #deze functie is niet commutatief/houdt geen rekening met haakjes volgorde
+#Als te vaak aangeroepen error
 def evalueer(lijst):
 	if len(lijst) == 1:
 		return lijst
@@ -104,19 +105,12 @@ def evalueer(lijst):
 	else:
 		return [lijst[0]]+evalueer(lijst[1:])
 
-expr = str_to_expr("(lxyz.y(xyz))((lxyz.y(xyz))(luv.u(u(uv))))")
-expr = [expr[0]] + evalueer([expr[1], expr[2]])
-'''print(len(evalueer(expr)))'''
-print(evalueer(expr)[0].vereenvoudig())
-'''for x in expr:
-	print(x)'''
-#print(evalueer(expr))
+expr = str_to_expr("(labc.a(bc))(lsz.s(sz))(lxy.x(x(xy)))")
+#expr = [expr[0]] + evalueer([expr[1], expr[2]])
 
-'''functie1=functie(pram=["a", "b"], body=["a", "b", "c"])
-functie2=functie(pram=["x", "y"], body=["y"])
-for x in evalueer([functie1, functie2])[0].body:
+for x in expr:
 	print(x)
-print(evalueer([functie1, functie2])[0])'''
+print(evalueer(expr)[0])
 
 
 
