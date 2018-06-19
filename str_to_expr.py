@@ -1,4 +1,7 @@
+#!/usr/bin/env python3
+
 from Class_Lambda import functie
+from Class_Lambda import expr
 
 def str_to_expr1(tekst):
 	inp = []
@@ -38,8 +41,8 @@ def expr1_to_expr(input,output=[]):
 		output.append(input.pop(0))
 		return expr1_to_expr(input,output)
 		
-def str_to_expr(tekst):
-	return expr1_to_expr(str_to_expr1(tekst),[])
+def str_to_expr(tekst): #ik heb hier toegevoegd dat hij er een expressie van maakt
+	return expr(expr1_to_expr(str_to_expr1(tekst),[]))
 
-expr = str_to_expr("(labc.a(bc))((lsz.s(sz))(lxy.x(x(xy))))")
-print(expr[0].body)
+expre = str_to_expr("(labc.a(bc))((lsz.s(sz))(lxy.x(x(xy))))")
+print(expre)
