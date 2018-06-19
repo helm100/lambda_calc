@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+#from str_to_expr import str_to_expr
+
+
 #denk na over invoer van functies zonder haakjes (alfa_reductie)
 #denk na over len(self.body)==0
 #the reduction process may not terminate. For instance, consider the term O = ( lx . x x ) ( l x . x x ), gaat naar zichzelf dus stopt nooit  
@@ -28,6 +31,7 @@ class functie:
 	def alfa_conversion(self):
 		pass
 
+	#laatste poppen is wss efficienter
 	def beta_redu(self, argumenten):
 		while len(argumenten)>0 and len(self.pram)>0:
 			self.body = replace(self.body, self.pram.pop(0), argumenten.pop(0))
@@ -44,69 +48,10 @@ class functie:
 	#gemaakt om een body erin te stoppen
 	def vereenvoudig(self):
 		if self.body_bevat_functie():
-			self.body=evalueer(self.body)
+			self.body=eval_subexpr2(self.body)
 			return self.vereenvoudig()
 		else:
 			return self
-
-#Volgens mij kunnen we deze functie ook als een methode maken met overloaden, alleen ik wist ff niet hoe
-#Deze functie neemt een string en returnd de bijpassende functie
-def str_to_func(tekst):
-	if tekst[0]=="(" and tekst[-1]==")":
-		begin=2
-	else:
-		begin=1
-	index = tekst.find(".")
-	pram=[]
-	body=[]
-	for x in range(begin,index):
-		pram.append(tekst[x])
-	for x in range(index+1,len(tekst)+1-begin):
-		body.append(tekst[x])
-	return functie(pram, body)
-	
-
-def str_to_expr1(tekst):
-	inp = []
-	haakjes = 0
-	for i in range(len(tekst)):
-		if tekst[i] == "l" and haakjes == 0:
-			beg = i
-			haakjes += 1
-		elif tekst[i] == "(" and haakjes > 0:
-			haakjes += 1
-		elif tekst[i] == ")" and haakjes > 1:
-			haakjes -= 1
-		elif tekst[i] == ")" and haakjes == 1:
-			haakjes -= 1
-			nieuwe_tekst=tekst[beg:i+1]
-			index=nieuwe_tekst.find('.')
-			pram=list(nieuwe_tekst[1:index])
-			body=str_to_expr1(nieuwe_tekst[index+1:len(nieuwe_tekst)-1])
-			inp.append(functie(pram,body))
-		elif haakjes == 0 and not (i<len(tekst)-1 and tekst[i+1]=="l"):
-			inp.append(tekst[i])
-		
-	return inp
-	
-def expr1_to_expr(input,output=[]):
-	if len(input) == 0:
-		return output
-	if input[0] == ")":
-		del input[0]
-		return output
-	elif input[0] == "(":
-		del input[0]
-		subl = expr1_to_expr(input,[])
-		output.append(subl)
-		return expr1_to_expr(input,output)
-	else:
-		output.append(input.pop(0))
-		return expr1_to_expr(input,output)
-		
-def str_to_expr(tekst):
-	return expr1_to_expr(str_to_expr1(tekst))
-	
 
 #deze functie is niet commutatief/houdt geen rekening met haakjes volgorde
 def evalueer(lijst):
@@ -119,13 +64,66 @@ def evalueer(lijst):
 	else:
 		return [lijst[0]]+evalueer(lijst[1:])
 
-expr = str_to_expr("(lxyz.y(xyz))((lxyz.y((xy)z))(luv.u(u(uv))))")
-#expr = [expr[0]] + evalueer([expr[1], expr[2]])
-print(expr)
-#print(expr_to_expr2(expr))
-#for x in expr_to_expr2(expr):
-#	if x != "(" and x != ")":
-#		print(x)
+def bevat_lijst(lijst):
+	for x in lijst:
+		if isinstance(x, list):
+			return True
+	return False
+
+#error handling voor te diepe recursie
+def eval_subexpr(lijst):
+	if len(lijst)==0:
+		return []
+	if not bevat_lijst(lijst):
+		return evalueer(lijst)
+	if isinstance(lijst[0], list):
+		return eval_subexpr(lijst[0])+eval_subexpr(lijst[1:])
+	else:
+		return [lijst[0]]+eval_subexpr(lijst[1:])
+
+def eval_subexpr2(lijst):
+	new_list=[]
+	for i in range(len(lijst)):
+		#print(new_list)
+		if isinstance(lijst[i], list):
+			#print(lijst[i])
+			if bevat_lijst(lijst[i]):
+				new_list += eval_subexpr2(lijst[i])
+			else:
+				new_list += evalueer(lijst[i])
+		else:
+			new_list.append(lijst[i])
+	return evalueer(new_list)
+
+functie1=functie(["a", "b"], ["b"])
+functie2=functie(["x", "y", "z"], ["x", "y", "z", "z"])
+functie3=functie(["q"], ["q", "q"])
+#expr=["b", "x", "y", "z",[functie2,[[functie1,"q"],functie3]], "a"]
+
+'''for x in evalueer(eval_subexpr2(expr)):
+	if isinstance(x, functie):
+		print(x.vereenvoudig())
+	else:
+		print(x)'''
+
+
+'''expr_2=[functie2,[functie1,functie3]]
+for x in eval_subexpr2(expr_2):
+	print(x)'''
+
+
+
+#print(eval_subexpr2(expr)[0].body[0].body,[])
+
+
+'''for x in evalueer(expr):
+	print(x)'''
+'''for x in eval_subexpr2(expr):
+	if isinstance(x, functie):
+		print(x.vereenvoudig())
+	else:
+		print(x)'''
+
 
 
 
