@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from Class_Lambda import functie
-from Class_Lambda import expr
+from class_lambda import functie
+from class_lambda import expr
 
 def str_to_expr1(tekst):
 	inp = []

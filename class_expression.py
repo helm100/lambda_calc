@@ -2,7 +2,7 @@
 
 #vooralsnog staat deze klasse ook in Class_Lambda.py
 
-from Class_Lambda import functie
+from class_lambda import functie
 
 class expr(list):
 

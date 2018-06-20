@@ -6,6 +6,7 @@
 #denk na over len(self.body)==0
 #the reduction process may not terminate. For instance, consider the term O = ( lx . x x ) ( l x . x x ), gaat naar zichzelf dus stopt nooit  
 
+#deze is wrs niet meer nodig
 def replace(lijst, old, new):
 	for i in range(len(lijst)):
 		if lijst[i] == old:
@@ -37,6 +38,7 @@ class functie:
 		pass
 
 	#laatste poppen is wss efficienter
+	#misschien wil je de functie verwijderen uit het geheugen als alle variabelen gebruikt zijn
 	def beta_redu(self, argumenten):
 		while len(argumenten)>0 and len(self.pram)>0:
 			#self.body = replace(self.body, self.pram.pop(0), argumenten.pop(0))
