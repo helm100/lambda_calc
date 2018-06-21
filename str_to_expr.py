@@ -48,3 +48,4 @@ expr1 = str_to_expr("a(lxyz.y(xyz))((lxyz.y(xyz))(luv.u(u(uv))))")
 #expr1.evalueer()
 #print(expr1)		
 print(expr(expr1.evalueer()))
+
