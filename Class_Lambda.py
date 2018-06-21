@@ -2,7 +2,7 @@
 #from str_to_expr import str_to_expr
 
 
-#denk na over invoer van functies zonder haakjes (alfa_reductie)
+#denk na over invoer van functies zonder haakjes (alfa_reductie)/meerdere variabelen vaker voorkomen
 #denk na over len(self.body)==0
 #the reduction process may not terminate. For instance, consider the term O = ( lx . x x ) ( l x . x x ), gaat naar zichzelf dus stopt nooit  
 
@@ -45,39 +45,7 @@ class functie:
 			self.body.subst(self.pram.pop(0),argumenten.pop(0))
 		if len(self.pram)==0:
 			return expr(self.body + argumenten)
-		return [self]
-
-	def body_bevat_functie(self):
-		for x in self.body:
-			if isinstance(x, functie):
-				return True
-		return False
-
-	#gemaakt om een body erin te stoppen
-	def vereenvoudig(self):
-		if self.body_bevat_functie():
-			self.body=eval_subexpr(self.body)
-			return self.vereenvoudig()
-		else:
-			return self
-
-
-			
-			
-def bevat_lijst(lijst):
-	for x in lijst:
-		if isinstance(x, list):
-			return True
-	return False
-			
-#deze functie is niet commutatief/houdt geen rekening met haakjes volgorde
-def evalueer(lijst):
-	if len(lijst) == 1:
-		return lijst
-	if isinstance(lijst[0], functie):
-			return evalueer(lijst[0].beta_redu(lijst[1:]))
-	else:
-		return [lijst[0]]+evalueer(lijst[1:])
+		return expr([self])
 
 #error handling voor te diepe recursie
 def eval_subexpr(lijst):
@@ -105,7 +73,20 @@ class expr(list):
 				self.l.append(expr(self[i]))
 			else:
 				self.l.append(self[i])'''
+
+	def bevat_lijst(self):
+		for x in self:
+			if isinstance(x, list):
+				return True
+		return False
+
+	def bevat_functie(self):
+		for x in self:
+			if isinstance(x, functie):
+				return True
+		return False
 	
+	#Deze functie vervangt in een body (dus een expr) een bepaalde parameter (pram) door other
 	def subst(self,pram,other):
 		for i in range(len(self)):
 			if isinstance(self[i],list): #anders als sublijsten al expr zijn
@@ -113,6 +94,25 @@ class expr(list):
 			elif self[i] == pram:
 				self[i] = other
 		return self
+
+	#deze functie is niet commutatief/houdt geen rekening met haakjes volgorde
+	def evalueer(self):
+		print(self)
+		if len(self) == 1:
+			print(self)
+			return self
+		if isinstance(self[0], functie):
+			return self[0].beta_redu(self[1:]).evalueer()
+		else:
+			return expr([self[0]])+expr(self[1:]).evalueer()
+
+	#gemaakt om een body erin te stoppen
+	'''def vereenvoudig(self):
+		if self.bevat_functie():
+			self=eval_subexpr(self)
+			return self.vereenvoudig()
+		else:
+			return self'''
 
 	def __str__(self):
 		expressie = []
@@ -123,7 +123,7 @@ class expr(list):
 				expressie.append(str(x))
 		return ''.join(expressie)
 
-		
+
 	
 
 	
