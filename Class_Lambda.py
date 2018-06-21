@@ -13,7 +13,6 @@ def replace(lijst, old, new):
 			lijst[i]=new
 	return lijst
 
-
 class functie:
 	def __init__(self, pram=['x'], body=['x']):
 		self.pram=pram
@@ -97,14 +96,16 @@ class expr(list):
 
 	#deze functie is niet commutatief/houdt geen rekening met haakjes volgorde
 	def evalueer(self):
-		print(self)
 		if len(self) == 1:
-			print(self)
 			return self
 		if isinstance(self[0], functie):
-			return self[0].beta_redu(self[1:]).evalueer()
+			self[0] = self[0].beta_redu(self[1:]).evalueer()
+			for x in range(1, len(self)):
+				del self[x]
+			return self
 		else:
-			return expr([self[0]])+expr(self[1:]).evalueer()
+			self = expr([self[0]]) + expr(self[1:]).evalueer()
+			return self
 
 	#gemaakt om een body erin te stoppen
 	'''def vereenvoudig(self):
@@ -122,45 +123,4 @@ class expr(list):
 			else:
 				expressie.append(str(x))
 		return ''.join(expressie)
-
-
-	
-
-	
-	
-	
-	
-	
-'''	
-
-functie1=functie(["a", "b"], ["b"])
-functie2=functie(["x", "y", "z"], ["x", "y", "z", "z"])
-functie3=functie(["q"], ["q", "q"])
-#expr=["b", "x", "y", "z",[functie2,[[functie1,"q"],functie3]], "a"]
-
-for x in evalueer(eval_subexpr(expr)):
-	if isinstance(x, functie):
-		print(x.vereenvoudig())
-	else:
-		print(x)
-
-
-expr_2=[functie2,[functie1,functie3]]
-for x in eval_subexpr(expr_2):
-	print(x)
-
-
-
-#print(eval_subexpr2(expr)[0].body[0].body,[])
-
-for x in evalueer(expr):
-	print(x)
-for x in eval_subexpr(expr):
-	if isinstance(x, functie):
-		print(x.vereenvoudig())
-	else:
-		print(x)
-
-
-'''
 
