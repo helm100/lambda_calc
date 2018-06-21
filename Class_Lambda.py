@@ -62,17 +62,15 @@ def eval_subexpr(lijst):
 	
 
 	
-#eigenlijk willen we dit net iets anders hebben: sublijsten moeten ook weer expressies zijn	
+
 #je kan een expressie printen en elementen substitueren
 class expr(list):
-
-	'''def __init__(self,lijst):
-		self = []
-		for i in range(len(lijst)):
-			if isinstance(lijst[i],list):
-				self.l.append(expr(self[i]))
-			else:
-				self.l.append(self[i])'''
+	
+	def __init__(self,lijst):
+		super().__init__(lijst)
+		for i in range(len(self)):
+			if isinstance(self[i],list):
+				self[i] = expr(self[i])
 
 	def bevat_lijst(self):
 		for x in self:
@@ -89,8 +87,8 @@ class expr(list):
 	#Deze functie vervangt in een body (dus een expr) een bepaalde parameter (pram) door other
 	def subst(self,pram,other):
 		for i in range(len(self)):
-			if isinstance(self[i],list): #anders als sublijsten al expr zijn
-				self[i]=expr(self[i]).subst(pram,other)
+			if isinstance(self[i],expr):
+				self[i]=self[i].subst(pram,other)
 			elif self[i] == pram:
 				self[i] = other
 		return self
@@ -117,8 +115,8 @@ class expr(list):
 	def __str__(self):
 		expressie = []
 		for x in self:
-			if isinstance(x,list): #anders als sublijsten al expr zijn
-				expressie.append('('+str(expr(x))+')')
+			if isinstance(x,expr): #anders als sublijsten al expr zijn
+				expressie.append('('+str(x)+')')
 			else:
 				expressie.append(str(x))
 		return ''.join(expressie)

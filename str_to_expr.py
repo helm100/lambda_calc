@@ -44,6 +44,7 @@ def expr1_to_expr(input,output=[]):
 def str_to_expr(tekst): #ik heb hier toegevoegd dat hij er een expressie van maakt
 	return expr(expr1_to_expr(str_to_expr1(tekst),[]))
 
-expre = str_to_expr("(labc.a(bc))((lsz.s(sz))(lxy.x(x(xy))))")
-expre.evalueer()
-print(expre)
+#expre = str_to_expr("(labc.a(bc))((lsz.s(sz))(lxy.x(x(xy))))")
+expre1 = expr(['a',['b',['x','y'], 'c']]).subst('x','z')
+expre2 = expr(['a','b','x','y'])
+
