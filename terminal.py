@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #!/usr/bin/env python3
 
 from Class_Lambda import functie
@@ -8,6 +9,7 @@ print("Welcome..")
 print("To enter and evaluate lambda expressions, type 'lambda'.")
 print("To use a calculator that is programmed with lambda calculus, type 'calc'.")
 print("To exit, type exit.")
+
 
 def menu(input_user):
 	if input_user == "lambda":

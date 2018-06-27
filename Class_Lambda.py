@@ -46,22 +46,6 @@ class functie:
 			return expr(self.body + argumenten)
 		return expr([self])
 
-#error handling voor te diepe recursie
-def eval_subexpr(lijst):
-	new_list=[]
-	for i in range(len(lijst)):
-		if isinstance(lijst[i], list):
-			if bevat_lijst(lijst[i]):
-				new_list += eval_subexpr(lijst[i])
-			else:
-				new_list += evalueer(lijst[i])
-		else:
-			new_list.append(lijst[i])
-	return evalueer(new_list)
-	
-
-	
-
 #je kan een expressie printen en elementen substitueren
 class expr(list):
 	
@@ -71,9 +55,9 @@ class expr(list):
 			if isinstance(self[i],list):
 				self[i] = expr(self[i])
 
-	def bevat_lijst(self):
+	def bevat_expr(self):
 		for x in self:
-			if isinstance(x, list):
+			if isinstance(x, expr):
 				return True
 		return False
 
@@ -97,21 +81,31 @@ class expr(list):
 		if len(self) == 1:
 			return self
 		if isinstance(self[0], functie):
-			self[0] = self[0].beta_redu(self[1:]).evalueer()
-			for x in range(1, len(self)):
-				del self[x]
+			self[:] = self[0].beta_redu(self[1:]).evalueer()
 			return self
 		else:
-			self = expr([self[0]]) + expr(self[1:]).evalueer()
+			self[:] = expr([self[0]]) + expr(self[1:]).evalueer()
 			return self
 
+	#error handling voor te diepe recursie
+	def eval_subexpr(self):
+		new_list=[]
+		for i in range(len(self)):
+			if isinstance(self[i], expr):
+				if self[i].bevat_expr():
+					new_list += self[i].eval_subexpr()
+				else:
+					new_list += self[i].evalueer()
+			else:
+				new_list.append(self[i])
+		return expr(new_list).evalueer()
+
 	#gemaakt om een body erin te stoppen
-	'''def vereenvoudig(self):
-		if self.bevat_functie():
-			self=eval_subexpr(self)
-			return self.vereenvoudig()
-		else:
-			return self'''
+	def vereenvoudig(self):
+		for x in range(len(self)):
+			if isinstance(self[x], functie):
+				self[x].body=self[x].body.eval_subexpr()
+		return self
 
 	def __str__(self):
 		expressie = []
