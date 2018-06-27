@@ -104,7 +104,7 @@ class expr(list):
 	def vereenvoudig(self):
 		for x in range(len(self)):
 			if isinstance(self[x], functie):
-				self[x].body=self[x].body.eval_subexpr()
+				self[x].body=self[x].body.eval_subexpr().vereenvoudig()
 		return self
 
 	def __str__(self):

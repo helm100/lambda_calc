@@ -45,10 +45,11 @@ def str_to_expr(tekst): #ik heb hier toegevoegd dat hij er een expressie van maa
 	return expr(expr1_to_expr(str_to_expr1(tekst),[]))
 
 
-'''
-expr1 = str_to_expr("a(lxyz.y(xyz))((lxyz.y(xyz))(luv.u(u(uv))))")
+
+expr1 = str_to_expr("y(y(y(y(yz))))")
 #expr1.evalueer()
-#print(expr1)		
-print(expr(expr1.evalueer()))
-'''
+#print(expr1)
+print(expr(expr1.eval_subexpr()))		
+
+
 
