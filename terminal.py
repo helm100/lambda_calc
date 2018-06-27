@@ -2,7 +2,7 @@
 
 from Class_Lambda import functie
 from Class_Lambda import expr
-import str_to_expr
+from str_to_expr import str_to_expr
 
 print("Welcome..")
 print("To enter and evaluate lambda expressions, type 'lambda'.")
@@ -29,15 +29,14 @@ def lambda_evaluator(user_input):
 	elif user_input == "exit":
 		return None
 	else:
-		l_expr = str_to_expr.str_to_expr(user_input)
+		l_expr = str_to_expr(user_input)
 		print("Your lambda expression: "+str(l_expr))
-		print(l_expr.evalueer())
+		print("In simplified form: "+str(l_expr.eval_subexpr()))
 		lambda_evaluator(input("type a lambda expression: "))
 	
-sucs = None #successor
+sucs = str_to_expr("(lxyz.y(xyz))")
 pred = None #predecessor
-plus = str_to_expr.str_to_expr("(lxyz.y(xyz))")
-oprt = {'+': str_to_expr.str_to_expr("(lxyz.y(xyz))"),'-': str_to_expr.str_to_expr("(lxy.yPx)"),'*': str_to_expr.str_to_expr("(lxyz.x(yz))")}	
+#oprt = {'+': str_to_expr("(lxyz.y(xyz))"),'-': str_to_expr("(lxy.yPx)"),'*': str_to_expr("(lxyz.x(yz))")}	
 
 def lambda_calculator(user_input):
 	if user_input == "back":
@@ -49,17 +48,22 @@ def lambda_calculator(user_input):
 	for i in range(len(user_input)):
 		if user_input[i] == '+':
 			exprs.append(numb_to_lamb(user_input[:i]))
-			exprs.append(plus[0])
+			exprs.append(sucs[0])
 			exprs.append(numb_to_lamb(user_input[i+1:]))
 			exprs = expr(exprs)
 			break
-	#exprs.evalueer()
+	exprs.eval_subexpr()
 	print(exprs)
 	lambda_calculator(input("type a simple calculation: "))
 			
 def numb_to_lamb(numberstr):
 	n = int(numberstr)
-	return functie(['s','z'],['s']*n+['z'])
+	l_str = "(lsz."
+	for i in range(n):
+		l_str += "s("
+	l_str += "z"+")"*(n+1)
+	return str_to_expr(l_str)[0]
+		
 		
 menu(input("type lambda, calc or exit: "))
 	
