@@ -1,9 +1,13 @@
-class test(list):
-    def update(self):
-        self[:] = test(['a','b','c','d'])
+usr_inp = ""
 
-x = test([1,2,3])
-print(x)
-x.update()
-print(x)
-print(type(x))
+def numb_to_lamb(numberstr):
+	n = int(numberstr)
+	l_str = "(lsz."
+	for i in range(n):
+		l_str += "s("
+	l_str += "z"+")"*(n+1)
+	print(l_str)
+	
+while usr_inp != "exit":
+	usr_inp = input()
+	numb_to_lamb(usr_inp)
