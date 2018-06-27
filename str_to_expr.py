@@ -47,6 +47,6 @@ def str_to_expr(tekst): #ik heb hier toegevoegd dat hij er een expressie van maa
 expr1 = str_to_expr("(((la.a)))b")
 #expr1=expr(["a",functie(["x", "y"],["x", "y", "y"]) ,"b"])
 #expr1.evalueer()
-print(expr1.eval_subexpr())		
+print(expr1)		
 #print(expr(expr1.evalueer()))
 
