@@ -10,7 +10,7 @@ print("To use a calculator that is programmed with lambda calculus, type 'calc'.
 print("To exit, type exit.")
 
 
-def menu(input_user):
+def menu(input_user): #basismenu
 	if input_user == "lambda":
 		print("You can enter a lambda expression to be evaluated.")
 		print("You can check whether two expressions are equal with ==")
@@ -23,7 +23,7 @@ def menu(input_user):
 	else:
 		menu(input("type lambda, calc or exit: "))
 		
-def lambda_evaluator(user_input):
+def lambda_evaluator(user_input): #neemt als input een lambda expr en evalueert/vergelijkt deze
 	if user_input == "back":
 		menu(input("type lambda, calc or exit: "))
 	elif user_input == "exit":
@@ -38,31 +38,58 @@ sucs = str_to_expr("(lxyz.y(xyz))")
 pred = None #predecessor
 #oprt = {'+': str_to_expr("(lxyz.y(xyz))"),'-': str_to_expr("(lxy.yPx)"),'*': str_to_expr("(lxyz.x(yz))")}	
 
-def lambda_calculator(user_input):
+def lambda_calculator(user_input): #zet input zoals '2+3' om in een lambda expr en evalueert deze
 	if user_input == "back":
 		menu(input("type lambda, calc or exit: "))
 	elif user_input == "exit":
 		return None
-	
-	exprs=[]
-	for i in range(len(user_input)):
-		if user_input[i] == '+':
-			exprs.append(numb_to_lamb(user_input[:i]))
-			exprs.append(sucs[0])
-			exprs.append(numb_to_lamb(user_input[i+1:]))
-			exprs = expr(exprs)
-			break
-	exprs.eval_subexpr()
-	print(exprs)
-	lambda_calculator(input("type a simple calculation: "))
-			
-def numb_to_lamb(numberstr):
+	try:
+		exprs=[]
+		for i in range(len(user_input)):
+			if user_input[i] == '+':
+				exprs.append(numb_to_lamb(user_input[:i]))
+				exprs.append(sucs[0])
+				exprs.append(numb_to_lamb(user_input[i+1:]))
+				exprs = expr(exprs)
+				break
+		print("In lambda form: "+str(exprs))
+		exprs.eval_subexpr()
+		for i in range(80): #ik laat hem nu gewoon 80 keer vereenvoudigen, kan handiger misschien
+			exprs.vereenvoudig()
+		print("Simplified: "+str(exprs))
+		res = 0
+		print("In human language: "+str(len(exprs[0].body)-1))
+		lambda_calculator(input("type a simple calculation: "))
+	except ValueError:
+		print("I couldn't interpret this, sorry")
+		lambda_calculator(input("type a simple calculation: "))
+		
+def numb_to_lamb(numberstr): #zet een geheel getal om in een lambdafunctie	
 	n = int(numberstr)
 	l_str = "(lsz."
 	for i in range(n):
 		l_str += "s("
 	l_str += "z"+")"*(n+1)
 	return str_to_expr(l_str)[0]
+	
+def calc_to_lamb(input, exprs=[]): #zet een berekening om in lambda expressie
+	for i in range(len(input)):
+		base=0
+		if input[i] == "(":
+			exprs.append(calc_to_lamb(input[i+1:],[]))
+		elif input[i] == "+":
+			exprs.append(numb_to_lamb(input[base:i]))
+			exprs.append(pls)
+			base = i+1
+		elif input[i] == "-":
+			pass
+		elif input[i] == "*":
+			pass
+		elif input[i] == ")":
+			return exprs
+		elif i == len(input)-1:
+			exprs.append(numb_to_lamb(input[base:i]))
+			return expr(exprs)
 		
 		
 menu(input("type lambda, calc or exit: "))
