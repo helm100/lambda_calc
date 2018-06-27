@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from class_lambda import functie
-from class_lambda import expr
+from Class_Lambda import functie
+from Class_Lambda import expr
 
 def str_to_expr1(tekst):
 	inp = []
@@ -44,8 +44,10 @@ def expr1_to_expr(input,output=[]):
 def str_to_expr(tekst): #ik heb hier toegevoegd dat hij er een expressie van maakt
 	return expr(expr1_to_expr(str_to_expr1(tekst),[]))
 
+'''
 expr1 = str_to_expr("a(lxyz.y(xyz))((lxyz.y(xyz))(luv.u(u(uv))))")
 #expr1.evalueer()
 #print(expr1)		
 print(expr(expr1.evalueer()))
+'''
 
