@@ -43,8 +43,3 @@ def expr1_to_expr(input,output=[]):
 		
 def str_to_expr(tekst): #ik heb hier toegevoegd dat hij er een expressie van maakt
 	return expr(expr1_to_expr(str_to_expr1(tekst),[]))
-
-expr1=str_to_expr("(lab.aabb)(lxy.xxxy)r")
-#expr1=str_to_expr("((lbc.(xy)bc))zr")
-#expr1=str_to_expr("(xy)bc")
-print(expr1.evalueer())

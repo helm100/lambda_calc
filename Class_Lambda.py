@@ -2,6 +2,7 @@
 #from str_to_expr import str_to_expr
 
 import copy
+from itertools import chain
 
 #denk na over invoer van functies zonder haakjes (alfa_reductie)/meerdere variabelen vaker voorkomen
 #denk na over len(self.body)==0
@@ -37,7 +38,6 @@ class functie:
 
 #je kan een expressie printen en elementen substitueren
 class expr(list):
-	
 	def __init__(self,lijst):
 		super().__init__(lijst)
 		for i in range(len(self)):
@@ -62,54 +62,46 @@ class expr(list):
 	#Deze functie vervangt in een body (dus een expr) een bepaalde parameter (pram) door other
 	def subst(self,pram,other):
 		for i in range(len(self)):
-			if isinstance(self[i],expr):
+			if isinstance(self[i], expr):
 				self[i]=self[i].subst(pram,other)
 			elif self[i] == pram:
 				self[i] = copy.deepcopy(other) #hier moeten de functies onafhankelijk zijn
 		return self
 
-	#deze functie is niet commutatief/houdt geen rekening met haakjes volgorde
+	#Is alles een expr of wordt dat nu te vaak gedaan?
+	#nu wordt bij een error wel een lege lijst gereturnd
 	def evalueer(self):
 		try:
-			if len(self) == 1:
+			if len(self)==1:
 				return self
-			if isinstance(self[0], functie):
-				self[:] = self[0].beta_redu(self[1:]).evalueer()
-				return self
+			if isinstance(self[0], expr):
+				self[0] = self[0].evalueer()
+				self = expr(chain.from_iterable([self[0], self[1:]]))
+				self.evalueer()
+				return expr(self)
+				#Dit deel moet nog naar gekeken worden ivm links associativiteit, oftewel blijven de haakjes staan of niet.
+				'''if len(self[0]) == 1:
+					self[0] = self[0][0]
+					self[:] = expr(self).evalueer()
+					return expr(self)
+				else:
+					self[1:]=expr(self[1:]).evalueer()
+					return self'''
+			elif isinstance(self[0], functie):
+				self[:]=self[0].beta_redu(self[1:]).evalueer()
+				if isinstance(self[0], functie):
+					if self[0].body.bevat_functie():
+						self[0]=self[0].body.evalueer()
+				return expr(self)
+			elif isinstance(self[0], str):
+				self[1:]=expr(self[1:]).evalueer()
+				return expr(self)
 			else:
-				self[:] = expr([self[0]]) + expr(self[1:]).evalueer()
-				return self
+				print("Invalid input! This type: " + type(self[0]).__name__ + ", should not be in an expression.")
+				return []
 		except RecursionError:
 			print("This expression can not be evaluated and will go on for ever.")
 			return []
-
-
-	#error handling voor te diepe recursie
-	def eval_subexpr(self):
-		new_list=[]
-		for i in range(len(self)):
-			if isinstance(self[i], expr):
-				if self[i].bevat_expr():
-					new_list += [self[i].eval_subexpr()]
-				else:
-					new_list += [self[i].evalueer()]
-			else:
-				new_list.append(self[i])
-		self[:] = expr(new_list).evalueer()
-		return self
-	
-	#moet stoppen zodra er geen functie meer in zit of als het te lang duurt
-	#bij (λabc.a(bc))(λsz.s(sz))(λxy.x(x(xy))) moet er op een ggv moment een z bij de parameters
-	
-	#gemaakt om een body erin te stoppen
-	def vereenvoudig(self):
-		for x in range(len(self)):
-			if isinstance(self[x], functie):
-				print("functie gevonden")
-				while self[x].body.bevat_functie() and n<15:
-					n += 1
-					self[x].body=self[x].body.eval_subexpr().vereenvoudig()
-		return self
 	
 	def __str__(self):
 		expressie = []
@@ -119,4 +111,3 @@ class expr(list):
 			else:
 				expressie.append(str(x))
 		return ''.join(expressie)
-	

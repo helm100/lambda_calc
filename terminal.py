@@ -31,7 +31,7 @@ def lambda_evaluator(user_input): #neemt als input een lambda expr en evalueert/
 	else:
 		l_expr = str_to_expr(user_input)
 		print("Your lambda expression: "+str(l_expr))
-		l_expr.eval_subexpr()
+		l_expr.evalueer()
 		#while l_expr[0].body.bevat_functie(): #de vereenvoudig functie moet beter, moet zoiets bevatten maar ook stoppen na een aantal pogingen
 		#	l_expr.vereenvoudig()
 		print("In simplified form: "+str(l_expr))
@@ -56,10 +56,9 @@ def lambda_calculator(user_input): #zet input zoals '2+3' om in een lambda expr 
 				exprs = expr(exprs)
 				break
 		print("In lambda form: "+str(exprs))
-		exprs.eval_subexpr()
+		exprs.evalueer()
 		#for i in range(80): #ik laat hem nu gewoon 80 keer vereenvoudigen, kan handiger misschien
 		#	exprs.vereenvoudig()
-		exprs.vereenvoudig()
 		print("Simplified: "+str(exprs))
 		print("In human language: "+str(count(exprs[0].body)))
 		lambda_calculator(input("type a simple calculation: "))
