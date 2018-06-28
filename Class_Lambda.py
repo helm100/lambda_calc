@@ -8,10 +8,10 @@ import copy
 #the reduction process may not terminate. For instance, consider the term O = ( lx . x x ) ( l x . x x ), gaat naar zichzelf dus stopt nooit  
 
 #Te doen:
-#-als het te lang doorgaat
 #-locale variabelen/naamgeving
 #-andere foute invoer
 #-vereenvoudig
+#-subexpressies van lengte een zouden geen subexpressies moeten zijn
 
 
 class functie:
@@ -90,8 +90,10 @@ class expr(list):
 		for i in range(len(self)):
 			if isinstance(self[i], expr):
 				if self[i].bevat_expr():
+					#Het is mij niet duidelijk of hier nog rechte haken om self[i].eval_subexpr() heen moeten
 					new_list += [self[i].eval_subexpr()]
 				else:
+					#Het is mij niet duidelijk of hier nog rechte haken om self[i].eval_subexpr() heen moeten
 					new_list += [self[i].evalueer()]
 			else:
 				new_list.append(self[i])
