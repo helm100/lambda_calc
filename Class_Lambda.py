@@ -108,4 +108,3 @@ class expr(list):
 				expressie.append(str(x))
 		return ''.join(expressie)
 	
-
