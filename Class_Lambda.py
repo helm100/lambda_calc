@@ -70,14 +70,19 @@ class expr(list):
 
 	#deze functie is niet commutatief/houdt geen rekening met haakjes volgorde
 	def evalueer(self):
-		if len(self) == 1:
-			return self
-		if isinstance(self[0], functie):
-			self[:] = self[0].beta_redu(self[1:]).evalueer()
-			return self
-		else:
-			self[:] = expr([self[0]]) + expr(self[1:]).evalueer()
-			return self
+		try:
+			if len(self) == 1:
+				return self
+			if isinstance(self[0], functie):
+				self[:] = self[0].beta_redu(self[1:]).evalueer()
+				return self
+			else:
+				self[:] = expr([self[0]]) + expr(self[1:]).evalueer()
+				return self
+		except RecursionError:
+			print("This expression can not be evaluated and will go on for ever.")
+			return []
+
 
 	#error handling voor te diepe recursie
 	def eval_subexpr(self):
