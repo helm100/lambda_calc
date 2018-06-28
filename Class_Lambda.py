@@ -100,7 +100,9 @@ class expr(list):
 	def vereenvoudig(self):
 		for x in range(len(self)):
 			if isinstance(self[x], functie):
-				while self[x].body.bevat_functie():
+				print("functie gevonden")
+				while self[x].body.bevat_functie() and n<15:
+					n += 1
 					self[x].body=self[x].body.eval_subexpr().vereenvoudig()
 		return self
 	
