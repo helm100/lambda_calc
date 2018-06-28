@@ -90,8 +90,8 @@ class expr(list):
 	
 	#moet stoppen zodra er geen functie meer in zit of als het te lang duurt
 	#bij (λabc.a(bc))(λsz.s(sz))(λxy.x(x(xy))) moet er op een ggv moment een z bij de parameters
+	
 	#gemaakt om een body erin te stoppen
-
 	def vereenvoudig(self):
 		for x in range(len(self)):
 			if isinstance(self[x], functie):
