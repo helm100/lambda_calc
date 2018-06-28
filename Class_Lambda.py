@@ -100,7 +100,7 @@ class expr(list):
 				new_list.append(self[i])
 		return expr(new_list).evalueer()
 
-	#gemaakt om een body erin te stoppen
+	#gemaakt om een expr die al door eval_subexpr is gehaald te vereenvoudiggen door de body's van de functies ook te evalueren
 	def vereenvoudig(self):
 		for x in range(len(self)):
 			if isinstance(self[x], functie):
