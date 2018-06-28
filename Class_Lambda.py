@@ -7,6 +7,11 @@ import copy
 #denk na over len(self.body)==0
 #the reduction process may not terminate. For instance, consider the term O = ( lx . x x ) ( l x . x x ), gaat naar zichzelf dus stopt nooit  
 
+#Te doen:
+#-als het te lang doorgaat
+#-locale variabelen/naamgeving
+#-andere foute invoer
+#-vereenvoudig
 
 
 class functie:
@@ -82,7 +87,7 @@ class expr(list):
 				if self[i].bevat_expr():
 					new_list += [self[i].eval_subexpr()]
 				else:
-					new_list += self[i].evalueer()
+					new_list += [self[i].evalueer()]
 			else:
 				new_list.append(self[i])
 		self[:] = expr(new_list).evalueer()
