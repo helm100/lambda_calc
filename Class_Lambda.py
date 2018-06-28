@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
 #from str_to_expr import str_to_expr
 
+import copy
 
 #denk na over invoer van functies zonder haakjes (alfa_reductie)/meerdere variabelen vaker voorkomen
 #denk na over len(self.body)==0
 #the reduction process may not terminate. For instance, consider the term O = ( lx . x x ) ( l x . x x ), gaat naar zichzelf dus stopt nooit  
 
-#deze is wrs niet meer nodig
-def replace(lijst, old, new):
-	for i in range(len(lijst)):
-		if lijst[i] == old:
-			lijst[i]=new
-	return lijst
+
 
 class functie:
 	def __init__(self, pram=['x'], body=['x']):
@@ -20,17 +16,6 @@ class functie:
 
 
 	def __str__(self):
-	
-		'''body=[]
-		for x in self.body:
-			if isinstance(x, functie):
-				body.append(x.__str__())
-			#elif isinstance(x, lijst):
-			#	body.append('('++')')
-			else: 
-				body.append(x)'''
-	
-	
 		return "(l" + ''.join(self.pram) + "." + str(self.body) + ")"
 	
 	def alfa_conversion(self):
@@ -40,7 +25,6 @@ class functie:
 	#misschien wil je de functie verwijderen uit het geheugen als alle variabelen gebruikt zijn
 	def beta_redu(self, argumenten):
 		while len(argumenten)>0 and len(self.pram)>0:
-			#self.body = replace(self.body, self.pram.pop(0), argumenten.pop(0))
 			self.body.subst(self.pram.pop(0),argumenten.pop(0))
 		if len(self.pram)==0:
 			return expr(self.body + argumenten)
@@ -65,6 +49,9 @@ class expr(list):
 		for x in self:
 			if isinstance(x, functie):
 				return True
+			elif isinstance(x, expr):
+				if x.bevat_functie():
+					return True
 		return False
 	
 	#Deze functie vervangt in een body (dus een expr) een bepaalde parameter (pram) door other
@@ -73,7 +60,7 @@ class expr(list):
 			if isinstance(self[i],expr):
 				self[i]=self[i].subst(pram,other)
 			elif self[i] == pram:
-				self[i] = other
+				self[i] = copy.deepcopy(other) #hier moeten de functies onafhankelijk zijn
 		return self
 
 	#deze functie is niet commutatief/houdt geen rekening met haakjes volgorde
@@ -93,26 +80,32 @@ class expr(list):
 		for i in range(len(self)):
 			if isinstance(self[i], expr):
 				if self[i].bevat_expr():
-					new_list += self[i].eval_subexpr()
+					new_list += [self[i].eval_subexpr()]
 				else:
 					new_list += self[i].evalueer()
 			else:
 				new_list.append(self[i])
-		return expr(new_list).evalueer()
+		self[:] = expr(new_list).evalueer()
+		return self
+	
+	#moet stoppen zodra er geen functie meer in zit of als het te lang duurt
+	#bij (λabc.a(bc))(λsz.s(sz))(λxy.x(x(xy))) moet er op een ggv moment een z bij de parameters
+	#gemaakt om een body erin te stoppen
 
-	#gemaakt om een expr die al door eval_subexpr is gehaald te vereenvoudiggen door de body's van de functies ook te evalueren
 	def vereenvoudig(self):
 		for x in range(len(self)):
 			if isinstance(self[x], functie):
-				self[x].body=self[x].body.eval_subexpr().vereenvoudig()
+				while self[x].body.bevat_functie():
+					self[x].body=self[x].body.eval_subexpr().vereenvoudig()
 		return self
-
+	
 	def __str__(self):
 		expressie = []
 		for x in self:
-			if isinstance(x,expr): #anders als sublijsten al expr zijn
+			if isinstance(x,expr): 
 				expressie.append('('+str(x)+')')
 			else:
 				expressie.append(str(x))
 		return ''.join(expressie)
+	
 
