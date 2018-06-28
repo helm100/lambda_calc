@@ -49,6 +49,9 @@ class expr(list):
 		for x in self:
 			if isinstance(x, functie):
 				return True
+			elif isinstance(x, expr):
+				if x.bevat_functie():
+					return True
 		return False
 	
 	#Deze functie vervangt in een body (dus een expr) een bepaalde parameter (pram) door other
@@ -84,12 +87,15 @@ class expr(list):
 				new_list.append(self[i])
 		self[:] = expr(new_list).evalueer()
 		return self
-
+	
+	#moet stoppen zodra er geen functie meer in zit of als het te lang duurt
+	#bij (λabc.a(bc))(λsz.s(sz))(λxy.x(x(xy))) moet er op een ggv moment een z bij de parameters
 	#gemaakt om een body erin te stoppen
 	def vereenvoudig(self):
 		for x in range(len(self)):
 			if isinstance(self[x], functie):
-				self[x].body=self[x].body.eval_subexpr().vereenvoudig()
+				while self[x].body.bevat_functie():
+					self[x].body=self[x].body.eval_subexpr().vereenvoudig()
 		return self
 	
 	def __str__(self):
