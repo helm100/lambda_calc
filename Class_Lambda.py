@@ -73,12 +73,16 @@ class expr(list):
 	def evalueer(self):
 		try:
 			if len(self)==1:
+				if isinstance(self[0],expr):
+					self[0].evalueer()
+				#if self.bevat_functie():
+				#	self.evalueer()
 				return self
 			if isinstance(self[0], expr):
 				self[0] = self[0].evalueer()
-				self = expr(chain.from_iterable([self[0], self[1:]]))
+				self[:] = expr(chain.from_iterable([self[0], self[1:]])) #ik heb [:] toegevoegd
 				self.evalueer()
-				return expr(self)
+				return self
 				#Dit deel moet nog naar gekeken worden ivm links associativiteit, oftewel blijven de haakjes staan of niet.
 				'''if len(self[0]) == 1:
 					self[0] = self[0][0]
@@ -88,20 +92,22 @@ class expr(list):
 					self[1:]=expr(self[1:]).evalueer()
 					return self'''
 			elif isinstance(self[0], functie):
+				#print(str(self)+" voor")
 				self[:]=self[0].beta_redu(self[1:]).evalueer()
+				#print(str(self)+" na")
 				if isinstance(self[0], functie):
 					if self[0].body.bevat_functie():
-						self[0]=self[0].body.evalueer()
+						self[0].body=self[0].body.evalueer() #hier stond eerst self[0]=self[0].body...
 				return expr(self)
 			elif isinstance(self[0], str):
 				self[1:]=expr(self[1:]).evalueer()
 				return expr(self)
 			else:
 				print("Invalid input! This type: " + type(self[0]).__name__ + ", should not be in an expression.")
-				return []
+				return None
 		except RecursionError:
 			print("This expression can not be evaluated and will go on for ever.")
-			return []
+			return self
 	
 	def __str__(self):
 		expressie = []

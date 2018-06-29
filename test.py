@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from Class_Lambda import functie
 from Class_Lambda import expr
 from str_to_expr import str_to_expr
@@ -38,13 +39,8 @@ def calc_to_lamb(input, exprs=[]):
 			exprs.append(numb_to_lamb(input[base:]))
 			return expr(exprs)
 
-lam = str_to_expr("(lsz.s(s(z)))(lxyz.y(xyz))(lsz.z)")
-lam.evalueer()
-lam.vereenvoudig()
-lam.vereenvoudig()
-lam.vereenvoudig()
-#lam.evalueer()
-print(lam)
+ex = calc_to_lamb("1+1")
+print(ex)
 
 
 

@@ -37,9 +37,10 @@ def lambda_evaluator(user_input): #neemt als input een lambda expr en evalueert/
 		print("In simplified form: "+str(l_expr))
 		lambda_evaluator(input("type a lambda expression: "))
 	
-sucs = str_to_expr("(lxyz.y(xyz))")
+sucs = str_to_expr("(lxyz.y(xyz))")[0]
 pred = None #predecessor
 #oprt = {'+': str_to_expr("(lxyz.y(xyz))"),'-': str_to_expr("(lxy.yPx)"),'*': str_to_expr("(lxyz.x(yz))")}	
+tms = "times"
 
 def lambda_calculator(user_input): #zet input zoals '2+3' om in een lambda expr en evalueert deze
 	if user_input == "back":
@@ -47,22 +48,16 @@ def lambda_calculator(user_input): #zet input zoals '2+3' om in een lambda expr 
 	elif user_input == "exit":
 		return None
 	try:
-		exprs=[]
-		for i in range(len(user_input)):
-			if user_input[i] == '+':
-				exprs.append(numb_to_lamb(user_input[:i]))
-				exprs.append(sucs[0])
-				exprs.append(numb_to_lamb(user_input[i+1:]))
-				exprs = expr(exprs)
-				break
+		exprs = calc_to_lamb(user_input)
 		print("In lambda form: "+str(exprs))
 		exprs.evalueer()
-		#for i in range(80): #ik laat hem nu gewoon 80 keer vereenvoudigen, kan handiger misschien
-		#	exprs.vereenvoudig()
 		print("Simplified: "+str(exprs))
-		print("In human language: "+str(count(exprs[0].body)))
+		try:
+			print("In human language: "+str(count(exprs[0].body)))
+		except:
+			print("I couldn't interpret this as a number")
 		lambda_calculator(input("type a simple calculation: "))
-	except ValueError:
+	except (ValueError, AttributeError):
 		print("I couldn't interpret this, sorry")
 		lambda_calculator(input("type a simple calculation: "))
 		
@@ -74,23 +69,25 @@ def numb_to_lamb(numberstr): #zet een geheel getal om in een lambdafunctie
 	l_str += "z"+")"*(n+1)
 	return str_to_expr(l_str)[0]
 	
-def calc_to_lamb(input, exprs=[]): #zet een berekening om in lambda expressie
+def calc_to_lamb(input): #zet een berekening om in lambda expressie
+	base=0
+	exprs = []
 	for i in range(len(input)):
-		base=0
 		if input[i] == "(":
-			exprs.append(calc_to_lamb(input[i+1:],[]))
+			exprs.append(calc_to_lamb(input[i+1:]))
 		elif input[i] == "+":
 			exprs.append(numb_to_lamb(input[base:i]))
-			exprs.append(pls)
+			exprs.append(sucs)
 			base = i+1
 		elif input[i] == "-":
 			pass
 		elif input[i] == "*":
-			pass
+			exprs.append([tms,numb_to_lamb(input[base:i])]+calc_to_lamb(input[i+1:]))
+			return expr(exprs)
 		elif input[i] == ")":
 			return exprs
 		elif i == len(input)-1:
-			exprs.append(numb_to_lamb(input[base:i]))
+			exprs.append(numb_to_lamb(input[base:]))
 			return expr(exprs)
 			
 def count(lijst,n=0,ref=None): #telt het aantal sublijsten om een lambda functie om te zetten naar een geheel getal
@@ -102,7 +99,10 @@ def count(lijst,n=0,ref=None): #telt het aantal sublijsten om een lambda functie
 				n+=1
 			elif isinstance(x,list):
 				n+=count(x,0,ref)
-		return n
+		if n == 14:
+			return "bvo"
+		else:
+			return n
 				
 		
 menu(input("type lambda, calc or exit: "))
