@@ -13,6 +13,9 @@ from itertools import chain
 #-locale variabelen/naamgeving
 #-andere foute invoer
 #-vereenvoudig
+#-methode __eq__
+#-nu: (lab.ab)b = (lb.bb); moet zijn: (lab.ab)b = (lx.bx)
+#-(lx.(ly.xy))ab = (lxy.xy)ab ; dit is belangrijk om vermenigvuldiging te laten werken
 
 
 class functie:
@@ -24,8 +27,14 @@ class functie:
 	def __str__(self):
 		return "(l" + ''.join(self.pram) + "." + str(self.body) + ")"
 	
-	def alfa_conversion(self):
-		pass
+	def alfa_conv(self, nieuwe_var):
+		if len(nieuwe_var) != len(self.pram):
+			print("Invalid input for alfa conversion.")
+		else:
+			for i in range(len(self.pram)):
+				self.body.subst(self.pram[i],nieuwe_var[i])
+			self.pram = list(nieuwe_var)
+			return self
 
 	#laatste poppen is wss efficienter
 	#misschien wil je de functie verwijderen uit het geheugen als alle variabelen gebruikt zijn
@@ -44,7 +53,7 @@ class expr(list):
 			if isinstance(self[i],list):
 				self[i] = expr(self[i])
 
-	def bevat_functie(self):
+	def bevat_functie(self): #niet meer nodig?
 		for x in self:
 			if isinstance(x, functie):
 				return True
@@ -67,27 +76,38 @@ class expr(list):
 	def evalueer(self):
 		try:
 			if len(self)==1:
+				if isinstance(self[0],expr): #met deze situatie hield hij eerst geen rekening
+					self[0].evalueer()
 				return self
 			if isinstance(self[0], expr):
 				self[0] = self[0].evalueer()
-				self = expr(chain.from_iterable([self[0], self[1:]]))
+				self[:] = expr(chain.from_iterable([self[0], self[1:]])) #ik heb [:] toegevoegd
 				self.evalueer()
-				return expr(self)
+				return self
+				#Dit deel moet nog naar gekeken worden ivm links associativiteit, oftewel blijven de haakjes staan of niet.
+				'''if len(self[0]) == 1:
+					self[0] = self[0][0]
+					self[:] = expr(self).evalueer()
+					return expr(self)
+				else:
+					self[1:]=expr(self[1:]).evalueer()
+					return self'''
+
 			elif isinstance(self[0], functie):
 				self[:]=self[0].beta_redu(self[1:]).evalueer()
 				if isinstance(self[0], functie):
 					if self[0].body.bevat_functie():
-						self[0]=self[0].body.evalueer()
+						self[0].body=self[0].body.evalueer() #hier stond eerst self[0]=self[0].body...
 				return expr(self)
 			elif isinstance(self[0], str):
 				self[1:]=expr(self[1:]).evalueer()
 				return expr(self)
 			else:
 				print("Invalid input! This type: " + type(self[0]).__name__ + ", should not be in an expression.")
-				return []
+				return None
 		except RecursionError:
 			print("This expression can not be evaluated and will go on for ever.")
-			return []
+			return self
 	
 	def __str__(self):
 		expressie = []
@@ -97,3 +117,7 @@ class expr(list):
 			else:
 				expressie.append(str(x))
 		return ''.join(expressie)
+		
+	def __eq__(self,other):
+		if type(other) != expr:
+			return False
