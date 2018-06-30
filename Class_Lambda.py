@@ -15,7 +15,7 @@ from itertools import chain
 #-vereenvoudig
 #-methode __eq__
 #-nu: (lab.ab)b = (lb.bb); moet zijn: (lab.ab)b = (lx.bx)
-#-(lx.x(ly.y))ab = (lxy.xy)ab
+#-(lx.(ly.xy))ab = (lxy.xy)ab ; dit is belangrijk om vermenigvuldiging te laten werken
 
 
 class functie:
@@ -27,8 +27,14 @@ class functie:
 	def __str__(self):
 		return "(l" + ''.join(self.pram) + "." + str(self.body) + ")"
 	
-	def alfa_conversion(self):
-		pass
+	def alfa_conv(self, nieuwe_var):
+		if len(nieuwe_var) != len(self.pram):
+			print("Invalid input for alfa conversion.")
+		else:
+			for i in range(len(self.pram)):
+				self.body.subst(self.pram[i],nieuwe_var[i])
+			self.pram = list(nieuwe_var)
+			return self
 
 	#laatste poppen is wss efficienter
 	#misschien wil je de functie verwijderen uit het geheugen als alle variabelen gebruikt zijn

@@ -3,6 +3,7 @@
 from Class_Lambda import functie
 from Class_Lambda import expr
 from str_to_expr import str_to_expr
+import copy
 
 print("Welcome..")
 print("To enter and evaluate lambda expressions, type 'lambda'.")
@@ -68,10 +69,10 @@ def lambda_calculator(user_input): #zet input zoals '2+3' om in een lambda expr 
 		
 def numb_to_lamb(numberstr): #zet een geheel getal om in een lambdafunctie	
 	n = int(numberstr)
-	l_str = "(lsz."
+	l_str = "(lab."
 	for i in range(n):
-		l_str += "s("
-	l_str += "z"+")"*(n+1)
+		l_str += "a("
+	l_str += "b"+")"*(n+1)
 	return str_to_expr(l_str)[0]
 	
 def calc_to_lamb(input): #zet een berekening om in lambda expressie
@@ -87,7 +88,7 @@ def calc_to_lamb(input): #zet een berekening om in lambda expressie
 		elif input[i] == "-":
 			pass
 		elif input[i] == "*":
-			exprs.append([tms,numb_to_lamb(input[base:i])]+calc_to_lamb(input[i+1:]))
+			exprs.append([copy.deepcopy(tms),numb_to_lamb(input[base:i])]+calc_to_lamb(input[i+1:]))
 			return expr(exprs)
 		elif input[i] == ")":
 			return exprs
