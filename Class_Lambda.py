@@ -125,6 +125,4 @@ class expr(list):
 		if len(self)==n:
 			return True
 		return False
-
-
-
+		
