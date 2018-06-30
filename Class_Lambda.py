@@ -11,9 +11,6 @@ from itertools import chain
 #Te doen:
 #-locale variabelen/naamgeving
 #-andere foute invoer
-#-vereenvoudig
-#-methode __eq__
-#-nu: (lab.ab)b = (lb.bb); moet zijn: (lab.ab)b = (lx.bx)
 #-(lx.(ly.xy))ab = (lxy.xy)ab ; dit is belangrijk om vermenigvuldiging te laten werken
 
 
@@ -111,6 +108,7 @@ class expr(list):
 				expressie.append(str(x))
 		return ''.join(expressie)
 		
+	#Klopt nog niet helemaal, want nu (la.a) != (lb.b)
 	def __eq__(self,other):
 		if type(other) != expr:
 			return False
