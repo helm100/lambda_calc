@@ -9,7 +9,6 @@ from itertools import chain
 #the reduction process may not terminate. For instance, consider the term O = ( lx . x x ) ( l x . x x ), gaat naar zichzelf dus stopt nooit  
 
 #Te doen:
-#-als het te lang doorgaat
 #-locale variabelen/naamgeving
 #-andere foute invoer
 #-vereenvoudig
@@ -121,3 +120,9 @@ class expr(list):
 	def __eq__(self,other):
 		if type(other) != expr:
 			return False
+		if self.evalueer() == other.evalueer():
+			return True
+		return False
+
+
+
