@@ -19,7 +19,7 @@ from itertools import chain
 
 class functie:
 	def __init__(self, pram=['x'], body=['x']):
-		self.pram=pram
+		self.pram=expr(pram)
 		self.body=expr(body)
 
 
@@ -66,6 +66,9 @@ class expr(list):
 		for i in range(len(self)):
 			if isinstance(self[i], expr):
 				self[i]=self[i].subst(pram,other)
+			elif isinstance(self[i], functie):
+				self[i].body=self[i].body.subst(pram, other)
+				self[i].pram=self[i].pram.subst(pram, other)
 			elif self[i] == pram:
 				self[i] = copy.deepcopy(other) #hier moeten de functies onafhankelijk zijn
 		return self
@@ -83,15 +86,6 @@ class expr(list):
 				self[:] = expr(chain.from_iterable([self[0], self[1:]])) #ik heb [:] toegevoegd
 				self.evalueer()
 				return self
-				#Dit deel moet nog naar gekeken worden ivm links associativiteit, oftewel blijven de haakjes staan of niet.
-				'''if len(self[0]) == 1:
-					self[0] = self[0][0]
-					self[:] = expr(self).evalueer()
-					return expr(self)
-				else:
-					self[1:]=expr(self[1:]).evalueer()
-					return self'''
-
 			elif isinstance(self[0], functie):
 				self[:]=self[0].beta_redu(self[1:]).evalueer()
 				if isinstance(self[0], functie):
@@ -120,7 +114,15 @@ class expr(list):
 	def __eq__(self,other):
 		if type(other) != expr:
 			return False
-		if self.evalueer() == other.evalueer():
+		self.evalueer()
+		other.evalueer()
+		if len(self)!=len(other):
+			return False
+		n=0
+		for i in range(len(self)):
+			if str(self[i])==str(other[i]):
+				n += 1
+		if len(self)==n:
 			return True
 		return False
 
