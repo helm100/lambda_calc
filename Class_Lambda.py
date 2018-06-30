@@ -13,6 +13,9 @@ from itertools import chain
 #-locale variabelen/naamgeving
 #-andere foute invoer
 #-vereenvoudig
+#-methode __eq__
+#-nu: (lab.ab)b = (lb.bb); moet zijn: (lab.ab)b = (lx.bx)
+#-(lx.x(ly.y))ab = (lxy.xy)ab
 
 
 class functie:
@@ -44,13 +47,13 @@ class expr(list):
 			if isinstance(self[i],list):
 				self[i] = expr(self[i])
 
-	def bevat_expr(self):
+	def bevat_expr(self): 
 		for x in self:
 			if isinstance(x, expr):
 				return True
 		return False
 
-	def bevat_functie(self):
+	def bevat_functie(self): #niet meer nodig?
 		for x in self:
 			if isinstance(x, functie):
 				return True
@@ -73,10 +76,8 @@ class expr(list):
 	def evalueer(self):
 		try:
 			if len(self)==1:
-				if isinstance(self[0],expr):
+				if isinstance(self[0],expr): #met deze situatie hield hij eerst geen rekening
 					self[0].evalueer()
-				#if self.bevat_functie():
-				#	self.evalueer()
 				return self
 			if isinstance(self[0], expr):
 				self[0] = self[0].evalueer()
@@ -92,9 +93,7 @@ class expr(list):
 					self[1:]=expr(self[1:]).evalueer()
 					return self'''
 			elif isinstance(self[0], functie):
-				#print(str(self)+" voor")
 				self[:]=self[0].beta_redu(self[1:]).evalueer()
-				#print(str(self)+" na")
 				if isinstance(self[0], functie):
 					if self[0].body.bevat_functie():
 						self[0].body=self[0].body.evalueer() #hier stond eerst self[0]=self[0].body...
@@ -117,3 +116,7 @@ class expr(list):
 			else:
 				expressie.append(str(x))
 		return ''.join(expressie)
+		
+	def __eq__(self,other):
+		if type(other) != expr:
+			return False

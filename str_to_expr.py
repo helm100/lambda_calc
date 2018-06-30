@@ -44,11 +44,3 @@ def expr1_to_expr(input,output=[]):
 def str_to_expr(tekst): #ik heb hier toegevoegd dat hij er een expressie van maakt
 	return expr(expr1_to_expr(str_to_expr1(tekst),[]))
 	
-	
-	
-#exp = str_to_expr("((ls.s(z)))yz")
-#exp = str_to_expr("(lsz.s(z))(lxyz.y(xyz))(lsz.s(z))")
-exp = str_to_expr("y(((lsz.s(z)))yz))")
-print(exp)
-exp.evalueer()
-print(exp)
