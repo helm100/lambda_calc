@@ -44,12 +44,6 @@ class expr(list):
 			if isinstance(self[i],list):
 				self[i] = expr(self[i])
 
-	def bevat_expr(self):
-		for x in self:
-			if isinstance(x, expr):
-				return True
-		return False
-
 	def bevat_functie(self):
 		for x in self:
 			if isinstance(x, functie):
@@ -79,14 +73,6 @@ class expr(list):
 				self = expr(chain.from_iterable([self[0], self[1:]]))
 				self.evalueer()
 				return expr(self)
-				#Dit deel moet nog naar gekeken worden ivm links associativiteit, oftewel blijven de haakjes staan of niet.
-				'''if len(self[0]) == 1:
-					self[0] = self[0][0]
-					self[:] = expr(self).evalueer()
-					return expr(self)
-				else:
-					self[1:]=expr(self[1:]).evalueer()
-					return self'''
 			elif isinstance(self[0], functie):
 				self[:]=self[0].beta_redu(self[1:]).evalueer()
 				if isinstance(self[0], functie):
