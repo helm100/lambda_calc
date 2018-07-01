@@ -30,14 +30,14 @@ def lambda_evaluator(user_input): #neemt als input een lambda expr en evalueert/
 	elif user_input == "q":
 		return None
 	else:
-		try:
+		#try:
 			if '==' in user_input:
 				indx = user_input.index('=')
 				TorF = str_to_expr(user_input[:indx])==str_to_expr(user_input[indx+2:])
 				if TorF:
-					print("I think these expressions are equal.")
+					print("I think these expressions are equivalent.")
 				else:
-					print("I think these expressions are not equal.")
+					print("I think these expressions are not equivalent.")
 				lambda_evaluator(input("type a lambda expression: "))
 			else:
 				l_expr = str_to_expr(user_input)
@@ -45,8 +45,9 @@ def lambda_evaluator(user_input): #neemt als input een lambda expr en evalueert/
 				l_expr.evalueer()
 				print("In simplified form: "+str(l_expr))
 				lambda_evaluator(input("type a lambda expression: "))
-		except:
-			print("I could not interpret this, sorry")
+		#except:
+		#	print("I could not interpret this, sorry")
+		#	lambda_evaluator(input("type a lambda expression: "))
 	
 sucs = str_to_expr("(lxyz.y(xyz))")[0]
 pred = None #predecessor
@@ -58,19 +59,21 @@ def lambda_calculator(user_input): #zet input zoals '2+3' om in een lambda expr 
 		menu(input("type lambda, calc or exit: "))
 	elif user_input == "q":
 		return None
+	#try:
+	exprs = calc_to_lamb(user_input)
+	print("In lambda form: "+str(exprs))
+	exprs.evalueer()
+	#exprs[0][0].voeg_samen()
+	print("Simplified: "+str(exprs))
 	try:
-		exprs = calc_to_lamb(user_input)
-		print("In lambda form: "+str(exprs))
-		exprs.evalueer()
-		print("Simplified: "+str(exprs))
-		#try:
-		print("In human language: "+str(count(exprs[0].body)))
-		#except:
-		#	print("I couldn't interpret this as a number")
+		print("In human language: "+str(count(exprs[0])))
 		lambda_calculator(input("type a simple calculation: "))
-	except (ValueError, AttributeError):
-		print("I couldn't interpret this, sorry")
+	except:
+		print("I couldn't interpret this as a number")
 		lambda_calculator(input("type a simple calculation: "))
+	#except (ValueError, AttributeError):
+	#	print("I couldn't interpret this, sorry")
+	#	lambda_calculator(input("type a simple calculation: "))
 		
 def numb_to_lamb(numberstr): #zet een geheel getal om in een lambdafunctie	
 	n = int(numberstr)
@@ -101,39 +104,24 @@ def calc_to_lamb(input): #zet een berekening om in lambda expressie
 			exprs.append(numb_to_lamb(input[base:]))
 			return expr(exprs)
 			
-
-'''
-def count(lijst,n=0,ref=None): #telt het aantal sublijsten om een lambda functie om te zetten naar een geheel getal
-		for x in lijst:
-			if n==0 and ref==None:
-				ref = x
-				n+=1
-			elif x==ref:
-				n+=1
-			elif isinstance(x,list):
-				n+=count(x,0,ref)
-		return n
-'''
-def count(lijst): #deze telt in de string: eenvoudiger dan het tellen van sublijsten
+def count(lijst): #deze functie zet een lambda expressie om in een geheel getal
 	string = str(lijst)
-	if string[1] != 'l':
-		ref = string[0]
-	else:
-		ref = string[4]
+	ref = string[string.find("l")+1]
 	n=0
 	for x in string:
 		if x == ref:
 			n+=1
-	return n
+	return n-1
 
 		
 		
 
-
+#ex = str_to_expr("(lx.(ly.xy))")
+#print(ex.vind_vrij())
 		
 menu(input("type lambda, calc or q: "))
 	
 
-print("Thank you for using me!")
+#print("Thank you for using me!")
 
 

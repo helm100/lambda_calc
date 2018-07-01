@@ -72,19 +72,24 @@ class functie:
 		else:
 			for i in range(len(self.pram)):
 				self.body.subst(self.pram[i],nieuwe_var[i])
-			self.pram = list(nieuwe_var)
+			self.pram = expr(list(nieuwe_var))
 			return self
 
 	#laatste poppen is wss efficienter
 	#misschien wil je de functie verwijderen uit het geheugen als alle variabelen gebruikt zijn
 	def beta_redu(self, argumenten):
+		vervangers = [x for x in alfabet if x not in (self.pram + self.body.vind_vrij(self.pram))]
 		while len(argumenten)>0 and len(self.pram)>0:
+			if argumenten[0] in self.pram:
+				indx = self.pram.index(argumenten[0])
+				nieuw_var = self.pram[:indx]+[vervangers.pop(0)]+self.pram[indx+1:]
+				self.alfa_conv(nieuw_var)
 			self.body.subst(self.pram.pop(0),argumenten.pop(0))
 		if len(self.pram)==0:
 			return expr(self.body + argumenten)
 		return expr([self])
 
-	def voeg_samen(self):
+	def voeg_samen(self): 
 		if not self.body.bevat_functie():
 			return self
 		else:
@@ -113,15 +118,27 @@ class expr(list):
 					return True
 		return False
 	
-	#Deze functie vervangt in een body (dus een expr) een bepaalde parameter (pram) door other
-	def subst(self,pram,other):
+	def vind_vrij(self,gebonden=[]): #geeft een lijst met alle (vrije) variabelen ongelijk aan gebonden
+		vrij = []
+		for x in self:
+			if isinstance(x,functie):
+				vrij += x.body.vind_vrij(gebonden+x.pram)
+			elif isinstance(x,expr):
+				vrij += x.vind_vrij(gebonden)
+			else:
+				if x not in gebonden+vrij:
+					vrij.append(x)
+		return vrij
+	
+	#Deze functie vervangt in een body (dus een expr) een bepaalde parameter (param) door other
+	def subst(self,param,other):
 		for i in range(len(self)):
 			if isinstance(self[i], expr):
-				self[i]=self[i].subst(pram,other)
+				self[i]=self[i].subst(param,other)
 			elif isinstance(self[i], functie):
-				self[i].body=self[i].body.subst(pram, other)
-				self[i].pram=self[i].pram.subst(pram, other)
-			elif self[i] == pram:
+				if param in self[i].body.vind_vrij(self[i].pram): #substitueert vrije var. in een functie
+					self[i].body.subst(param,other)
+			elif self[i] == param:
 				self[i] = copy.deepcopy(other) #hier moeten de functies onafhankelijk zijn
 		return self
 
@@ -132,6 +149,8 @@ class expr(list):
 			if len(self)==1:
 				if isinstance(self[0],expr): #met deze situatie hield hij eerst geen rekening
 					self[0].evalueer()
+				#elif isinstance(self[0],functie):
+				#	self[0].voeg_samen()
 				return self
 			if isinstance(self[0], expr):
 				self[0] = self[0].evalueer()
@@ -151,7 +170,7 @@ class expr(list):
 				print("Invalid input! This type: " + type(self[0]).__name__ + ", should not be in an expression.")
 				return None
 		except RecursionError:
-			print("This expression can not be evaluated and will go on for ever.")
+			print("The evaluation doesn't terminate, here's what I got:")
 			return self
 
 	def __str__(self):
@@ -163,8 +182,9 @@ class expr(list):
 				expressie.append(str(x))
 		return ''.join(expressie)
 	
-#Deze functie werkt niet als er letters voorkomen die niet in het europese alfabet van kleine letters zitten.	
-	def hernoem(self):
+#Deze methode werkt niet als er letters voorkomen die niet in het europese alfabet van kleine letters zitten.
+#deze methode hernoemt alle variabelen zodat twee lambda expressies vergeleken kunnen worden
+	def hernoem(self): 
 		vervangen = []
 		string = list(str(self))
 		for i in range(len(string)):
