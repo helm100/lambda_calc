@@ -11,9 +11,10 @@ from itertools import chain
 
 #Te doen:
 #-andere foute invoer
+#-functie zonder variabele
 #-(lx.(ly.xy))ab = (lxy.xy)ab ; dit is belangrijk om vermenigvuldiging te laten werken
 
-alfabet=["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+alfabet=["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
 
 def str_to_expr1(tekst):
@@ -84,15 +85,16 @@ class functie:
 			return expr(self.body + argumenten)
 		return expr([self])
 
+	#Deze methode werkt alleen als hij wordt toegepast nadat een functie en de body ervan helemaal geevalueerd zijn
 	def voeg_samen(self):
 		if not self.body.bevat_functie():
 			return self
 		else:
 			for i in range(len(self.body)):
 				if isinstance(self.body[i], functie):
-					self.pram = expr(self.pram + self.body[i].pram)
 					if self.body[i].body.bevat_functie():
 						self.body[i].voeg_samen()
+					self.pram = expr(self.pram + self.body[i].pram)
 					self.body[:] = self.body[:i] + self.body[i].body + self.body[i+1:]
 			return self
 
@@ -127,6 +129,7 @@ class expr(list):
 
 	#Is alles een expr of wordt dat nu te vaak gedaan?
 	#nu wordt bij een error wel een lege lijst gereturnd
+	#Voeg samen hierin stoppen
 	def evalueer(self):
 		try:
 			if len(self)==1:
@@ -143,6 +146,7 @@ class expr(list):
 				if isinstance(self[0], functie):
 					if self[0].body.bevat_functie():
 						self[0].body=self[0].body.evalueer() #hier stond eerst self[0]=self[0].body...
+					#self[0][:] = self[0].voeg_samen()
 				return expr(self)
 			elif isinstance(self[0], str):
 				self[1:]=expr(self[1:]).evalueer()
