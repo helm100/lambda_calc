@@ -33,7 +33,12 @@ def lambda_evaluator(user_input): #neemt als input een lambda expr en evalueert/
 		try:
 			if '==' in user_input:
 				indx = user_input.index('=')
-				return str_to_expr(user_input[:indx])==str_to_expr(user_input[indx+2:])
+				TorF = str_to_expr(user_input[:indx])==str_to_expr(user_input[indx+2:])
+				if TorF:
+					print("I think these expressions are equal.")
+				else:
+					print("I think these expressions are not equal.")
+				lambda_evaluator(input("type a lambda expression: "))
 			else:
 				l_expr = str_to_expr(user_input)
 				print("Your lambda expression: "+str(l_expr))
