@@ -173,18 +173,22 @@ class expr(list):
 		return ''.join(expressie)
 	
 #Deze functie werkt niet als er letters voorkomen die niet in het europese alfabet van kleine letters zitten.	
-	def hernoem(self):
-		vervangen = []
-		string = list(str(self))
-		for i in range(len(string)):
-			if (string[i] != "(") and (string[i] != ")") and (string[i] != ".") and (string[i] != "l"):
-				if string[i] in vervangen:
-					string[i] = alfabet[vervangen.index(string[i])]
-				else:
-					vervangen.append(string[i])
-					string[i] = alfabet[len(vervangen)-1]
-		self[:] = str_to_expr("".join(string))
-		return self
+#Staat nog niet in verslag nieuwe versie!
+	def hernoem(self,vervangen):
+		for i in range(len(self)):
+			if isinstance(self[i], expr):
+				self[i], vervangen = self[i].hernoem(vervangen)
+				#vervangen moet gereturnd worden om later te gebruiken
+			elif isinstance(self[i], functie):
+				for n in range(len(self[i].pram)):
+					if self[i].pram[n] in vervangen:
+						self[i].pram = self[i].pram.subst(self[i].pram[n],alfabet[vervangen.index(self[i].pram[n])])
+						self[i].body = self[i].body.subst(self[i].pram[n],alfabet[vervangen.index(self[i].pram[n])])
+					else:
+						vervangen.append(self[i].pram[n])
+						self[i].body = self[i].body.subst(self[i].pram[n],alfabet[len(vervangen)-1])
+						self[i].pram = self[i].pram.subst(self[i].pram[n],alfabet[len(vervangen)-1])
+		return self, vervangen
 
 
 #wrm komt hieruit (la.a)==((la.a)), terwijl evalueer dat niet geeft.
@@ -196,16 +200,11 @@ class expr(list):
 		if len(self)!=len(other):
 			return False
 		n=0
-		self.hernoem()
-		other.hernoem()
+		self.hernoem([])
+		other.hernoem([])
 		for i in range(len(self)):
 			if str(self[i])==str(other[i]):
 				n += 1
 		if len(self)==n:
 			return True
 		return False
-
-
-
-
-
