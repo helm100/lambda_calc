@@ -201,17 +201,22 @@ class expr(list):
 	def __eq__(self,other):
 		if type(other) != expr:
 			return False
-		self.evalueer()
-		other.evalueer()
 		if len(self)!=len(other):
 			return False
 		n=0
 		self.hernoem()
 		other.hernoem()
 		for i in range(len(self)):
+			if str(self[i])!=str(other[i]):
+				return False
+		return True
+		'''
+		for i in range(len(self)):
 			if str(self[i])==str(other[i]):
 				n += 1
 		if len(self)==n:
 			return True
 		return False
+		'''
+
 
