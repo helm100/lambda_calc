@@ -11,9 +11,10 @@ from itertools import chain
 
 #Te doen:
 #-andere foute invoer
+#-functie zonder variabele
 #-(lx.(ly.xy))ab = (lxy.xy)ab ; dit is belangrijk om vermenigvuldiging te laten werken
 
-alfabet=["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+alfabet=["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
 
 def str_to_expr1(tekst):
@@ -89,15 +90,16 @@ class functie:
 			return expr(self.body + argumenten)
 		return expr([self])
 
-	def voeg_samen(self): 
+	#Deze methode werkt alleen als hij wordt toegepast nadat een functie en de body ervan helemaal geevalueerd zijn
+	def voeg_samen(self):
 		if not self.body.bevat_functie():
 			return self
 		else:
 			for i in range(len(self.body)):
 				if isinstance(self.body[i], functie):
-					self.pram = expr(self.pram + self.body[i].pram)
 					if self.body[i].body.bevat_functie():
 						self.body[i].voeg_samen()
+					self.pram = expr(self.pram + self.body[i].pram)
 					self.body[:] = self.body[:i] + self.body[i].body + self.body[i+1:]
 			return self
 
@@ -144,13 +146,16 @@ class expr(list):
 
 	#Is alles een expr of wordt dat nu te vaak gedaan?
 	#nu wordt bij een error wel een lege lijst gereturnd
+	#Voeg samen hierin stoppen
 	def evalueer(self):
 		try:
 			if len(self)==1:
 				if isinstance(self[0],expr): #met deze situatie hield hij eerst geen rekening
 					self[0].evalueer()
-				#elif isinstance(self[0],functie):
-				#	self[0].voeg_samen()
+				if isinstance(self[0],functie):
+					if self[0].body.bevat_functie():
+						self[0].body.evalueer()
+					self[0]=self[0].voeg_samen()
 				return self
 			if isinstance(self[0], expr):
 				self[0] = self[0].evalueer()
@@ -162,6 +167,8 @@ class expr(list):
 				if isinstance(self[0], functie):
 					if self[0].body.bevat_functie():
 						self[0].body=self[0].body.evalueer() #hier stond eerst self[0]=self[0].body...
+					#misschien dat dit niet werkt, staat niet in verslag!!!!
+					self[0] = self[0].voeg_samen()
 				return expr(self)
 			elif isinstance(self[0], str):
 				self[1:]=expr(self[1:]).evalueer()
@@ -182,6 +189,7 @@ class expr(list):
 				expressie.append(str(x))
 		return ''.join(expressie)
 	
+
 #Deze methode werkt niet als er letters voorkomen die niet in het europese alfabet van kleine letters zitten.
 #deze methode hernoemt alle gebonden variabelen zodat twee lambda expressies vergeleken kunnen worden
 	def hernoem(self): 
@@ -191,39 +199,39 @@ class expr(list):
 			elif isinstance(self[i],expr):
 				self[i].hernoem()
 		return self
+
 	'''
-		vervangen = []
-		string = list(str(self))
-		for i in range(len(string)):
-			if (string[i] != "(") and (string[i] != ")") and (string[i] != ".") and (string[i] != "l"):
-				if string[i] in vervangen:
-					string[i] = alfabet[vervangen.index(string[i])]
-				else:
-					vervangen.append(string[i])
-					string[i] = alfabet[len(vervangen)-1]
-		self[:] = str_to_expr("".join(string))
-		print(self)
-		return self
+#Deze functie werkt niet als er letters voorkomen die niet in het europese alfabet van kleine letters zitten.	
+#Staat nog niet in verslag nieuwe versie!
+	def hernoem(self,vervangen):
+		for i in range(len(self)):
+			if isinstance(self[i], expr):
+				self[i], vervangen = self[i].hernoem(vervangen)
+				#vervangen moet gereturnd worden om later te gebruiken
+			elif isinstance(self[i], functie):
+				for n in range(len(self[i].pram)):
+					if self[i].pram[n] in vervangen:
+						self[i].body = self[i].body.subst(self[i].pram[n],alfabet[vervangen.index(self[i].pram[n])])
+						self[i].pram = self[i].pram.subst(self[i].pram[n],alfabet[vervangen.index(self[i].pram[n])])	
+					else:
+						vervangen.append(self[i].pram[n])
+						self[i].body = self[i].body.subst(self[i].pram[n],alfabet[len(vervangen)-1])
+						self[i].pram = self[i].pram.subst(self[i].pram[n],alfabet[len(vervangen)-1])
+		return self, vervangen
 	'''
 
+	#wrm komt hieruit (la.a)==((la.a)), terwijl evalueer dat niet geeft.
 	def __eq__(self,other):
+		print(self)
 		if type(other) != expr:
 			return False
 		if len(self)!=len(other):
 			return False
-		#n=0
-		self.hernoem()
-		other.hernoem()
+		self = self.hernoem()
+		other = other.hernoem()
 		for i in range(len(self)):
 			if str(self[i])!=str(other[i]):
+				print(str(self[i]))
+				print(str(other[i]))
 				return False
 		return True
-		'''
-		for i in range(len(self)):
-			if str(self[i])==str(other[i]):
-				n += 1
-		if len(self)==n:
-			return True
-		return False
-		'''
-

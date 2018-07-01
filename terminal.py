@@ -2,7 +2,7 @@
 
 from Class_Lambda import functie
 from Class_Lambda import expr
-from str_to_expr import str_to_expr
+from Class_Lambda import str_to_expr
 import copy
 
 print("Welcome..")
