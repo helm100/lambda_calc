@@ -134,7 +134,11 @@ class expr(list):
 		try:
 			if len(self)==1:
 				if isinstance(self[0],expr): #met deze situatie hield hij eerst geen rekening
-					self[0].evalueer()
+					self[0] = self[0].evalueer()
+				if isinstance(self[0],functie):
+					if self[0].body.bevat_functie():
+						self[0].body=self[0].body.evalueer()
+					self[0]=self[0].voeg_samen()
 				return self
 			if isinstance(self[0], expr):
 				self[0] = self[0].evalueer()
@@ -146,7 +150,8 @@ class expr(list):
 				if isinstance(self[0], functie):
 					if self[0].body.bevat_functie():
 						self[0].body=self[0].body.evalueer() #hier stond eerst self[0]=self[0].body...
-					#self[0][:] = self[0].voeg_samen()
+					#misschien dat dit niet werkt, staat niet in verslag!!!!
+					self[0] = self[0].voeg_samen()
 				return expr(self)
 			elif isinstance(self[0], str):
 				self[1:]=expr(self[1:]).evalueer()
@@ -179,9 +184,10 @@ class expr(list):
 					vervangen.append(string[i])
 					string[i] = alfabet[len(vervangen)-1]
 		self[:] = str_to_expr("".join(string))
-		print(self)
 		return self
 
+
+#wrm komt hieruit (la.a)==((la.a)), terwijl evalueer dat niet geeft.
 	def __eq__(self,other):
 		if type(other) != expr:
 			return False
@@ -198,4 +204,8 @@ class expr(list):
 		if len(self)==n:
 			return True
 		return False
+
+
+
+
 
