@@ -208,3 +208,5 @@ class expr(list):
 		if len(self)==n:
 			return True
 		return False
+
+expr1=str_to_expr("")
