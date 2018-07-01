@@ -182,8 +182,8 @@ class expr(list):
 			elif isinstance(self[i], functie):
 				for n in range(len(self[i].pram)):
 					if self[i].pram[n] in vervangen:
-						self[i].pram = self[i].pram.subst(self[i].pram[n],alfabet[vervangen.index(self[i].pram[n])])
 						self[i].body = self[i].body.subst(self[i].pram[n],alfabet[vervangen.index(self[i].pram[n])])
+						self[i].pram = self[i].pram.subst(self[i].pram[n],alfabet[vervangen.index(self[i].pram[n])])	
 					else:
 						vervangen.append(self[i].pram[n])
 						self[i].body = self[i].body.subst(self[i].pram[n],alfabet[len(vervangen)-1])
