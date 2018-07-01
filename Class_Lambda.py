@@ -183,8 +183,15 @@ class expr(list):
 		return ''.join(expressie)
 	
 #Deze methode werkt niet als er letters voorkomen die niet in het europese alfabet van kleine letters zitten.
-#deze methode hernoemt alle variabelen zodat twee lambda expressies vergeleken kunnen worden
+#deze methode hernoemt alle gebonden variabelen zodat twee lambda expressies vergeleken kunnen worden
 	def hernoem(self): 
+		for i in range(len(self)):
+			if isinstance(self[i],functie):
+				self[i].alfa_conv(alfabet[:len(self[i].pram)])
+			elif isinstance(self[i],expr):
+				self[i].hernoem()
+		return self
+	'''
 		vervangen = []
 		string = list(str(self))
 		for i in range(len(string)):
@@ -197,13 +204,14 @@ class expr(list):
 		self[:] = str_to_expr("".join(string))
 		print(self)
 		return self
+	'''
 
 	def __eq__(self,other):
 		if type(other) != expr:
 			return False
 		if len(self)!=len(other):
 			return False
-		n=0
+		#n=0
 		self.hernoem()
 		other.hernoem()
 		for i in range(len(self)):
@@ -218,5 +226,4 @@ class expr(list):
 			return True
 		return False
 		'''
-
 
