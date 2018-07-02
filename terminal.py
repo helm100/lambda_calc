@@ -49,10 +49,17 @@ def lambda_evaluator(user_input): #neemt als input een lambda expr en evalueert/
 		#	print("I could not interpret this, sorry")
 		#	lambda_evaluator(input("type a lambda expression: "))
 	
-sucs = str_to_expr("(lxyz.y(xyz))")[0]
+S = str_to_expr("(lxyz.y(xyz))")[0]
 pred = None #predecessor
 #oprt = {'+': str_to_expr("(lxyz.y(xyz))"),'-': str_to_expr("(lxy.yPx)"),'*': str_to_expr("(lxyz.x(yz))")}	
 tms = str_to_expr("(lxyz.x(yz))")[0]
+T = str_to_expr("(lxy.x)")[0] #TRUE
+F = str_to_expr("(lxy.y)")[0] #FALSE
+A = str_to_expr("(lxy.xy(luv.v))") #AND
+O = str_to_expr("(lxy.x(luv.u)y)") #OR
+N = str_to_expr("lx.x(luv.v)(lab.a)") #NOT
+Q = functie(['p','z'],['z',[S,['p',T]],['p',T]])
+(λpz.z(S(pT))(pT))
 
 def lambda_calculator(user_input): #zet input zoals '2+3' om in een lambda expr en evalueert deze
 	if user_input == "b":

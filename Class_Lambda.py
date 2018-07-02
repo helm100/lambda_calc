@@ -222,7 +222,6 @@ class expr(list):
 
 	#wrm komt hieruit (la.a)==((la.a)), terwijl evalueer dat niet geeft.
 	def __eq__(self,other):
-		print(self)
 		if type(other) != expr:
 			return False
 		if len(self)!=len(other):
@@ -231,7 +230,5 @@ class expr(list):
 		other = other.hernoem()
 		for i in range(len(self)):
 			if str(self[i])!=str(other[i]):
-				print(str(self[i]))
-				print(str(other[i]))
 				return False
 		return True
