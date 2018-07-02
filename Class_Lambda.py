@@ -155,6 +155,7 @@ class expr(list):
 		return vrij
 	
 	#Deze methode vervangt in een expressie en de sub-expressies daarvan een bepaalde parameter (param) door other
+	#Merk op dat in functies alleen de vrije variabele worden vervangen
 	def subst(self,param,other):
 		for i in range(len(self)):
 			if isinstance(self[i], expr):
