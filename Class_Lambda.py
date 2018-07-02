@@ -174,8 +174,7 @@ class expr(list):
 				if isinstance(self[0],expr):
 					self[:] = self[0].evalueer()
 				if isinstance(self[0],functie):
-					if self[0].body.bevat_functie():
-						self[0].body.evalueer()
+					self[0].body.evalueer()
 					self[0]=self[0].voeg_samen()
 				return self
 			if isinstance(self[0], expr):
@@ -186,8 +185,7 @@ class expr(list):
 			elif isinstance(self[0], functie):
 				self[:]=self[0].beta_redu(self[1:]).evalueer()
 				if isinstance(self[0], functie):
-					if self[0].body.bevat_functie():
-						self[0].body=self[0].body.evalueer()
+					self[0].body=self[0].body.evalueer()
 					self[0] = self[0].voeg_samen()
 				return expr(self)
 			elif isinstance(self[0], str):
