@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+'''
+In dit bestand worden functies gedefinieerd om een string om te zetten naar een lambda
+expressie.
+Vervolgens worden klassen gedefinieerd voor functies (lambda abstracties) en voor 
+expressies (lambda applicaties).
+'''
 
 import copy
 from itertools import chain
