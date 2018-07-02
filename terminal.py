@@ -5,6 +5,7 @@ from Class_Lambda import expr
 from Class_Lambda import str_to_expr
 import copy
 
+#Als de gebruiker het programma opent wordt hij of zij gelijk op onderstaande manier begroet
 print("Welcome..")
 print("To enter and evaluate lambda expressions, type 'lambda'.")
 print("To use a calculator that is programmed with lambda calculus, type 'calc'.")

@@ -1,22 +1,13 @@
 #!/usr/bin/env python3
-#from str_to_expr import str_to_expr
 
 import copy
 from itertools import chain
-#from str_to_expr import str_to_expr
 
-#denk na over invoer van functies zonder haakjes (alfa_reductie)/meerdere variabelen vaker voorkomen
-#denk na over len(self.body)==0
-#the reduction process may not terminate. For instance, consider the term O = ( lx . x x ) ( l x . x x ), gaat naar zichzelf dus stopt nooit  
-
-#Te doen:
-#-andere foute invoer
-#-functie zonder variabele
-#-(lx.(ly.xy))ab = (lxy.xy)ab ; dit is belangrijk om vermenigvuldiging te laten werken
-
+#Deze lijst wordt gebruikt door de methode hernoem om bepaalde gebonden variabelen te hernoemen.
+#Deze lijst bevat alle kleine en grote letters van het alfabet behalve de kleine letter l.
 alfabet=["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
-
+#Deze functie neemt een string als argument en maakt er een ... van?
 def str_to_expr1(tekst):
 	inp = []
 	haakjes = 0
@@ -39,7 +30,8 @@ def str_to_expr1(tekst):
 			inp.append(tekst[i])
 		
 	return inp
-	
+
+#Deze functie neemt ....
 def expr1_to_expr(input,output=[]):
 	if len(input) == 0:
 		return output
@@ -55,18 +47,28 @@ def expr1_to_expr(input,output=[]):
 		output.append(input.pop(0))
 		return expr1_to_expr(input,output)
 		
-def str_to_expr(tekst): #ik heb hier toegevoegd dat hij er een expressie van maakt
+#Deze functie past eerst str_to_expr1 toe en vervolgens expr1_to_expr, van de uitkomst wordt een expr gemaakt
+#Hierdoor wordt de code een stuk leesbaarder
+def str_to_expr(tekst):
 	return expr(expr1_to_expr(str_to_expr1(tekst),[]))
 
+#Deze klasse wordt gebruikt om functies te definiëren.
 class functie:
+
+	#Een functie is simpelweg een lijst met parameters en een lijst met een body
+	#Merk op dat self.pram en self.body expressies zijn
+	#Als er geen pram en body als argument worden gegeven is de default de identiteitsfunctie
 	def __init__(self, pram=['x'], body=['x']):
 		self.pram=expr(pram)
 		self.body=expr(body)
 
-
+	#Deze methode geeft de string weergave van een functie terug
+	#Merk op dat voor self.pram en self.body de str methode van de klasse expr wordt gebruikt
 	def __str__(self):
 		return "(l" + str(self.pram) + "." + str(self.body) + ")"
 	
+	#Deze methode vervangt alle gebonden variabelen van een functie door nieuwe in de lijst nieuwe_var
+	#Deze methode wordt gebruikt door de methode evalueer van de expr klasse
 	def alfa_conv(self, nieuwe_var):
 		if len(nieuwe_var) != len(self.pram):
 			print("Invalid input for alfa conversion.")
@@ -76,8 +78,9 @@ class functie:
 			self.pram = expr(list(nieuwe_var))
 			return self
 
-	#laatste poppen is wss efficienter
-	#misschien wil je de functie verwijderen uit het geheugen als alle variabelen gebruikt zijn
+
+	#Deze methode past een bepaalde functie (self) toe op een lijst argumenten, oftewel beta-reductie
+	#Deze methode wordt gebruikt door de methode evalueer van de expr klasse
 	def beta_redu(self, argumenten):
 		vervangers = [x for x in alfabet if x not in (self.pram + self.body.vind_vrij(self.pram))]
 		while len(argumenten)>0 and len(self.pram)>0:
@@ -91,6 +94,7 @@ class functie:
 		return expr([self])
 
 	#Deze methode werkt alleen als hij wordt toegepast nadat een functie en de body ervan helemaal geevalueerd zijn
+	#Deze methode wordt gebruikt in evalueer
 	def voeg_samen(self):
 		if not self.body.bevat_functie():
 			return self
@@ -103,15 +107,21 @@ class functie:
 					self.body[:] = self.body[:i] + self.body[i].body + self.body[i+1:]
 			return self
 
-#je kan een expressie printen en elementen substitueren
+#Deze klasse wordt gebruikt om lambda-expressies te definieren
+#Deze klasse erft van de klasse list en is in essentie een lijst variabele, functies en sub-expressies met enkele methodes toegevoegd
 class expr(list):
+
+	#Met behulp van de super functie wordt bijne de __init__ van de klasse lijst overgenomen
+	#Het verschil is dat van alle sub-lijsten ook expressies worden gemaakt, zodat de methodes van die klasse daar ook op werken
 	def __init__(self,lijst):
 		super().__init__(lijst)
 		for i in range(len(self)):
 			if isinstance(self[i],list):
 				self[i] = expr(self[i])
 
-	def bevat_functie(self): #niet meer nodig?
+	#Deze methode geeft True terug als een expressie of een sub-expressie een functie bevat
+	#Deze methode wordt gebruikt door de methode voeg_samen van de functie klasse
+	def bevat_functie(self):
 		for x in self:
 			if isinstance(x, functie):
 				return True
@@ -120,7 +130,8 @@ class expr(list):
 					return True
 		return False
 	
-	def vind_vrij(self,gebonden=[]): #geeft een lijst met alle (vrije) variabelen ongelijk aan gebonden
+	#Deze methode geeft een lijst terug met alle (vrije) variabelen ongelijk aan gebonden van alle functies in een expressie
+	def vind_vrij(self,gebonden=[]): 
 		vrij = []
 		for x in self:
 			if isinstance(x,functie):
@@ -132,7 +143,7 @@ class expr(list):
 					vrij.append(x)
 		return vrij
 	
-	#Deze functie vervangt in een body (dus een expr) een bepaalde parameter (param) door other
+	#Deze methode vervangt in een expressie en de sub-expressies daarvan een bepaalde parameter (param) door other
 	def subst(self,param,other):
 		for i in range(len(self)):
 			if isinstance(self[i], expr):
@@ -144,13 +155,11 @@ class expr(list):
 				self[i] = copy.deepcopy(other) #hier moeten de functies onafhankelijk zijn
 		return self
 
-	#Is alles een expr of wordt dat nu te vaak gedaan?
-	#nu wordt bij een error wel een lege lijst gereturnd
-	#Voeg samen hierin stoppen
+	#Deze methode evalueerd en vereenvoudigt een expressie compleet, hievoor maakt het gebruik van enkele andere methodes
 	def evalueer(self):
 		try:
 			if len(self)==1:
-				if isinstance(self[0],expr): #met deze situatie hield hij eerst geen rekening
+				if isinstance(self[0],expr):
 					self[:] = self[0].evalueer()
 				if isinstance(self[0],functie):
 					if self[0].body.bevat_functie():
@@ -159,15 +168,14 @@ class expr(list):
 				return self
 			if isinstance(self[0], expr):
 				self[0] = self[0].evalueer()
-				self[:] = expr(chain.from_iterable([self[0], self[1:]])) #ik heb [:] toegevoegd
+				self[:] = expr(chain.from_iterable([self[0], self[1:]])) 
 				self.evalueer()
 				return self
 			elif isinstance(self[0], functie):
 				self[:]=self[0].beta_redu(self[1:]).evalueer()
 				if isinstance(self[0], functie):
 					if self[0].body.bevat_functie():
-						self[0].body=self[0].body.evalueer() #hier stond eerst self[0]=self[0].body...
-					#misschien dat dit niet werkt, staat niet in verslag!!!!
+						self[0].body=self[0].body.evalueer()
 					self[0] = self[0].voeg_samen()
 				return expr(self)
 			elif isinstance(self[0], str):
@@ -176,10 +184,12 @@ class expr(list):
 			else:
 				print("Invalid input! This type: " + type(self[0]).__name__ + ", should not be in an expression.")
 				return None
-		except RecursionError:
+		except RecursionError: 
 			print("The evaluation doesn't terminate, here's what I got:")
 			return self
 
+	#Deze methode geeft de string weergave van een expressie terug
+	#Merk op dat hij gebruik maakt van de __str__ methode van de functie klasse
 	def __str__(self):
 		expressie = []
 		for x in self:
@@ -189,9 +199,8 @@ class expr(list):
 				expressie.append(str(x))
 		return ''.join(expressie)
 	
-
-#Deze methode werkt niet als er letters voorkomen die niet in het europese alfabet van kleine letters zitten.
-#deze methode hernoemt alle gebonden variabelen zodat twee lambda expressies vergeleken kunnen worden
+	#Deze methode hernoemt van alle functies in een expressie en de sub-expressies daarvan alle gebonden variabelen zodat twee lambda expressies vergeleken kunnen worden
+	#Deze methode werkt niet als er meer dan 51 variabele voorkomen in en expressie
 	def hernoem(self): 
 		for i in range(len(self)):
 			if isinstance(self[i],functie):
@@ -200,27 +209,7 @@ class expr(list):
 				self[i].hernoem()
 		return self
 
-	'''
-#Deze functie werkt niet als er letters voorkomen die niet in het europese alfabet van kleine letters zitten.	
-#Staat nog niet in verslag nieuwe versie!
-	def hernoem(self,vervangen):
-		for i in range(len(self)):
-			if isinstance(self[i], expr):
-				self[i], vervangen = self[i].hernoem(vervangen)
-				#vervangen moet gereturnd worden om later te gebruiken
-			elif isinstance(self[i], functie):
-				for n in range(len(self[i].pram)):
-					if self[i].pram[n] in vervangen:
-						self[i].body = self[i].body.subst(self[i].pram[n],alfabet[vervangen.index(self[i].pram[n])])
-						self[i].pram = self[i].pram.subst(self[i].pram[n],alfabet[vervangen.index(self[i].pram[n])])	
-					else:
-						vervangen.append(self[i].pram[n])
-						self[i].body = self[i].body.subst(self[i].pram[n],alfabet[len(vervangen)-1])
-						self[i].pram = self[i].pram.subst(self[i].pram[n],alfabet[len(vervangen)-1])
-		return self, vervangen
-	'''
-
-	#wrm komt hieruit (la.a)==((la.a)), terwijl evalueer dat niet geeft.
+	#Deze functie bepaalt de expressies self en other hetzelfde zijn volgens de regels van de lambdacalculus
 	def __eq__(self,other):
 		if type(other) != expr:
 			return False
