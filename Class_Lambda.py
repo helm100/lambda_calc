@@ -119,6 +119,17 @@ class expr(list):
 			if isinstance(self[i],list):
 				self[i] = expr(self[i])
 
+	#Deze methode geeft de string weergave van een expressie terug
+	#Merk op dat hij gebruik maakt van de __str__ methode van de functie klasse
+	def __str__(self):
+		expressie = []
+		for x in self:
+			if isinstance(x,expr): 
+				expressie.append('('+str(x)+')')
+			else:
+				expressie.append(str(x))
+		return ''.join(expressie)
+
 	#Deze methode geeft True terug als een expressie of een sub-expressie een functie bevat
 	#Deze methode wordt gebruikt door de methode voeg_samen van de functie klasse
 	def bevat_functie(self):
@@ -188,17 +199,6 @@ class expr(list):
 			print("The evaluation doesn't terminate, here's what I got:")
 			return self
 
-	#Deze methode geeft de string weergave van een expressie terug
-	#Merk op dat hij gebruik maakt van de __str__ methode van de functie klasse
-	def __str__(self):
-		expressie = []
-		for x in self:
-			if isinstance(x,expr): 
-				expressie.append('('+str(x)+')')
-			else:
-				expressie.append(str(x))
-		return ''.join(expressie)
-	
 	#Deze methode hernoemt van alle functies in een expressie en de sub-expressies daarvan alle gebonden variabelen zodat twee lambda expressies vergeleken kunnen worden
 	#Deze methode werkt niet als er meer dan 51 variabele voorkomen in en expressie
 	def hernoem(self): 
