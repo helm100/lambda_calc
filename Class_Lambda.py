@@ -151,7 +151,7 @@ class expr(list):
 		try:
 			if len(self)==1:
 				if isinstance(self[0],expr): #met deze situatie hield hij eerst geen rekening
-					self[0].evalueer()
+					self[:] = self[0].evalueer()
 				if isinstance(self[0],functie):
 					if self[0].body.bevat_functie():
 						self[0].body.evalueer()
@@ -224,6 +224,8 @@ class expr(list):
 	def __eq__(self,other):
 		if type(other) != expr:
 			return False
+		self.evalueer()
+		other.evalueer()
 		if len(self)!=len(other):
 			return False
 		self = self.hernoem()
@@ -232,3 +234,4 @@ class expr(list):
 			if str(self[i])!=str(other[i]):
 				return False
 		return True
+
