@@ -7,7 +7,7 @@ from itertools import chain
 #Deze lijst bevat alle kleine en grote letters van het alfabet behalve de kleine letter l.
 alfabet=["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
-#Deze functie neemt een string als argument en maakt er een ... van?
+#Deze functie neemt een string als argument en maakt er een lijst met functies, letters en haakjes van.
 def str_to_expr1(tekst):
 	inp = []
 	haakjes = 0
@@ -31,7 +31,7 @@ def str_to_expr1(tekst):
 		
 	return inp
 
-#Deze functie neemt ....
+#Deze functie neemt de lijst met functies, letters en haakjes en maakt van gebieden omgeven door extra haakjes sub-expressies.
 def expr1_to_expr(input,output=[]):
 	if len(input) == 0:
 		return output
@@ -48,7 +48,7 @@ def expr1_to_expr(input,output=[]):
 		return expr1_to_expr(input,output)
 		
 #Deze functie past eerst str_to_expr1 toe en vervolgens expr1_to_expr, van de uitkomst wordt een expr gemaakt
-#Hierdoor wordt de code een stuk leesbaarder
+#Hierdoor wordt de code een stuk leesbaarder en worden enkele problemen met recursie vermeden
 def str_to_expr(tekst):
 	return expr(expr1_to_expr(str_to_expr1(tekst),[]))
 
